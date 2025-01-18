@@ -114,15 +114,16 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
+  
   { prop: "projectpracticeCode", label: "实践课程编号" },
   { prop: "projectpracticeName", label: "实践课程名称"},
   { prop: "majorName", label: "专业" },
-  { prop: "grade", label: "年级" },
-  { prop: "adminName", label: "负责人" },
+  { prop: "grade", label: "年级", width:75},
+  { prop: "adminName", label: "负责人" ,width:85},
   { prop: "titleTime", label: "教师出题时间" },
   { prop: "selectTime", label: "学生选课时间" },
   { prop: "status", label: "状态" },
-  { prop: "operator", label: "操作", width: 250 },
+  { prop: "operatorno", label: "操作", width: 250 },
 ]);
 const page = reactive({
   index: 1,
@@ -243,10 +244,14 @@ function getRecentYears(numYears) {
 
 const recentYears = getRecentYears(4); // 获取最近3年
 // 新增/编辑弹窗相关
-let options = ref<FormOption>({
+let options = ref({
   labelWidth: "140px",
-  span: 12,
+  span: 22,
   list: [
+    {
+      type: "alert",
+
+    },
     {
       type: "input",
       label: "实践课程名称",
@@ -310,16 +315,14 @@ let options = ref<FormOption>({
     //{ type: "input", label: "负责人", prop: "adminName", required: true },
   ],
 });
-let newoptions = ref<FormOption>({
+let newoptions = ref({
   labelWidth: "140px",
-  span: 12,
+  span: 22,
   list: [
-    // {
-    //   type: "input",
-    //   label: "项目课程号",
-    //   prop: "majorCode",
-    //   required: true,
-    // },
+  {
+      type: "alert",
+
+    },
     {
       type: "input",
       label: "实践课程名称",

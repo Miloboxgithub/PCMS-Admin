@@ -365,10 +365,13 @@ export const fetchStudentCourseData = async (e, p,esp,n,s) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    //console.log(res.data);
+    console.log(res.data);
     let ans = {
       SelectCourseInfoList: res.data.data.SelectCourseInfoList,
       total: res.data.data.Count,
+      zhong: res.data.data.People,
+      weixuan: res.data.data.PeopleNot,
+      yixuan: res.data.data.PeopleHave
     };
     return ans;
   } catch (error) {

@@ -22,9 +22,11 @@
         </template>
         <template #toolbarBtn>
           <el-button type="success" @click="daochu()">
-              <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
-              导出
-            </el-button>
+            <el-icon style="margin-right: 5px"
+              ><el-icon><UploadFilled /></el-icon
+            ></el-icon>
+            导出
+          </el-button>
           <!-- <el-button
             type="warning"
             :icon="CirclePlusFilled"
@@ -34,6 +36,22 @@
             "
             >新增数据</el-button
           > -->
+          <!-- <el-select
+            v-model="xuan"
+            placeholder="Select"
+            style="width: 100px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in Projectxuan"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select> -->
+          <div style="margin-left: 10px;">
+            <el-checkbox v-model="yesxuan" label="已选课" border />
+          </div>
+          <div style="margin-left: 10px;"><el-checkbox v-model="noxuan" label="未选课" border /></div>
           <el-select
             v-model="practiceName"
             placeholder="Select"
@@ -46,6 +64,11 @@
               :value="item.value"
             />
           </el-select>
+          <div class="rrr">
+            <div>专业总人数：{{ zhong }}人</div>
+            <div>已选课人数：{{ yixuan }}人</div>
+            <div>未选课人数：{{ weixuan }}人</div>
+          </div>
         </template>
       </TableCustom>
     </div>
@@ -84,7 +107,7 @@
 </template>
 
 <script setup lang="ts" name="system-user">
-import { ref, reactive,watch } from "vue";
+import { ref, reactive, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
@@ -112,6 +135,8 @@ const goTologon = () => {
 console.log(TableSearch.props, "search");
 const startTime = ref("");
 const endTime = ref("");
+const yesxuan =ref(false);
+const noxuan =ref(false);
 // 查询相关
 const query = reactive({
   //name: "",
@@ -120,7 +145,9 @@ const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "姓名查询：", prop: "name" },
   { type: "input", label: "学号查询", prop: "sno" },
 ]);
-
+const zhong = ref(0);
+const weixuan = ref(0);
+const yixuan = ref(0);
 // 表格相关
 let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
@@ -144,16 +171,43 @@ const page = reactive({
   total: 0,
 });
 const Projectpractice = ref([]);
+const Projectxuan = ref([
+  {
+    value: "",
+    label: "全部",
+  },
+  {
+    value: "0",
+    label: "未选课",
+  },
+  {
+    value: "1",
+    label: "已选课",
+  },
+]);
 const practiceName = ref("");
+const xuan = ref("");
 // 监听practiceName的变化
 watch(practiceName, (newValue, oldValue) => {
   console.log(`选中的值从 ${oldValue} 变为 ${newValue}`);
   // 在这里调用你需要的函数
   getData(1, 0);
 });
+watch(yesxuan, (newValue, oldValue) => {
+  console.log(`yesxuan选中的值从 ${oldValue} 变为 ${newValue}`);
+
+  // 在这里调用你需要的函数
+  getData(1, 0);
+});
+watch(noxuan, (newValue, oldValue) => {
+  console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
+
+  // 在这里调用你需要的函数
+  getData(1, 0);
+})
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-  let esp = localStorage.getItem("v_codes");
+let esp = localStorage.getItem("v_codes");
 esp = JSON.parse(esp);
 console.log(esp, "esp");
 if (Array.isArray(esp)) {
@@ -168,23 +222,47 @@ if (Projectpractice.value.length > 0) {
   practiceName.value = Projectpractice.value[0].value;
 }
 const getData = async (e, p) => {
-
-  const ress = await fetchStudentCourseData(e, p,practiceName.value,'','');
+  const ress = await fetchStudentCourseData(e, p, practiceName.value, "", "");
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
-  tableData.value = ress.SelectCourseInfoList;
-  page.total = ress.total;
-
+  if ((yesxuan.value == false&&noxuan.value==false)|| (yesxuan.value == true && noxuan.value == true)) {
+    tableData.value = ress.SelectCourseInfoList;
+    page.total = ress.total;
+  } else if(yesxuan.value == true){
+    tableData.value = ress.SelectCourseInfoList.filter(
+      (item) => item.selectStatus == 1
+    );
+    page.total = ress.SelectCourseInfoList.filter(
+      (item) => item.selectStatus == 1
+    ).length;
+  }
+  else if(noxuan.value == true){
+    tableData.value = ress.SelectCourseInfoList.filter(
+      (item) => item.selectStatus == 0
+    );
+    page.total = ress.SelectCourseInfoList.filter(
+      (item) => item.selectStatus == 0
+    ).length;
+  }
+  zhong.value = ress.zhong;
+  yixuan.value = ress.yixuan;
+  weixuan.value = ress.weixuan;
   componentKey.value++;
   console.log(ress, tableData.value, "tableData");
 };
 getData(1, 0);
 const handleSearch = async (queryData) => {
-  if (!queryData.name&&!queryData.sno) {
+  if (!queryData.name && !queryData.sno) {
     getData(1, 0);
   } else {
-    const ress = await fetchStudentCourseData(1, 0,practiceName.value,queryData.name,queryData.sno);
+    const ress = await fetchStudentCourseData(
+      1,
+      0,
+      practiceName.value,
+      queryData.name,
+      queryData.sno
+    );
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
@@ -206,15 +284,18 @@ async function daochu() {
           message: "导出失败",
         });
       else {
-        const url = window.URL.createObjectURL(new Blob([res],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-        const link = document.createElement('a');
+        const url = window.URL.createObjectURL(
+          new Blob([res], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          })
+        );
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
-        link.style.display = 'none' // 隐藏元素
+        link.setAttribute("download", "data.xlsx"); // 设置下载的文件名
+        link.style.display = "none"; // 隐藏元素
         document.body.appendChild(link);
         link.click();
-        
+
         // 清理 DOM 和释放 URL 对象
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
@@ -350,11 +431,11 @@ let newoptions = ref<FormOption>({
       label: "状态",
       prop: "selectStatus",
       required: true,
-      options:[
+      options: [
         { label: "已选课", value: 1 },
         { label: "未选课", value: 0 },
-      ]
-    }
+      ],
+    },
   ],
 });
 const visible = ref(false);
@@ -371,16 +452,14 @@ const handleEdit = (row: User) => {
 const updateData = async (e) => {
   if (isEdit.value) {
     console.log(e, "编辑数据");
-      // e.projectpracticeCode = rowData.value.projectpracticeCode;
-      // const res = await updateCourse(e);
-      // console.log(res, "更新数据");
-
+    // e.projectpracticeCode = rowData.value.projectpracticeCode;
+    // const res = await updateCourse(e);
+    // console.log(res, "更新数据");
   } else {
     const res = await createStudentCourse(e);
-    if(res.code!=50){
+    if (res.code != 50) {
       ElMessage.success("新建成功");
-    }
-    else{
+    } else {
       ElMessage.error("新建失败");
     }
     console.log(res, "新建数据");
@@ -446,9 +525,9 @@ const handleDelSelection = (e) => {
   if (e.length > 0) {
     e.forEach((value) => {
       delt.push({
-    StudentSno:value.sno,
-    TitleCode:value.code
-  });
+        StudentSno: value.sno,
+        TitleCode: value.code,
+      });
     });
   }
   DeleteStudentCourseData(delt)
@@ -464,10 +543,12 @@ const handleDelSelection = (e) => {
 // 删除相关
 const handleDelete = async (row) => {
   //console.log(row, "删除");
-  let ttt =[{
-    StudentSno:row.sno,
-    TitleCode:row.code
-  }]
+  let ttt = [
+    {
+      StudentSno: row.sno,
+      TitleCode: row.code,
+    },
+  ];
   const res = await DeleteStudentCourseData(ttt);
   if (res.data.message == "success") {
     ElMessage.success("删除成功");
@@ -479,4 +560,16 @@ const handleDelete = async (row) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.rrr {
+  margin-left: 10px;
+  width: 400px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: MiSans;
+  font-weight: 500;
+  font-size: 16px;
+  color: #606266;
+}
+</style>

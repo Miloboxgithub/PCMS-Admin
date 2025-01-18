@@ -113,6 +113,8 @@ const setFullScreen = () => {
     color: var(--header-text-color);
     background-color: var(--header-bg-color);
     border-bottom: 1px solid #ddd;
+    background-color:  #ffffff !important;
+    color: black !important;
 }
 
 .header-left {
@@ -172,7 +174,7 @@ const setFullScreen = () => {
     cursor: pointer;
     display: flex;
     align-items: center;
-    color: var(--header-text-color);
+    color: black;
     margin: 0 5px;
     font-size: 20px;
 }
@@ -185,7 +187,7 @@ const setFullScreen = () => {
     height: 8px;
     border-radius: 4px;
     background: #f56c6c;
-    color: var(--header-text-color);
+    color: black;
 }
 
 .user-avator {
@@ -193,7 +195,7 @@ const setFullScreen = () => {
 }
 
 .el-dropdown-link {
-    color: var(--header-text-color);
+    color: black;
     cursor: pointer;
     display: flex;
     align-items: center;

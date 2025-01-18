@@ -127,15 +127,18 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
-  { prop: "projectpracticeCode", label: "实践课程编号" },
-  { prop: "projectpracticeName", label: "实践课程名称" },
-  { prop: "title", label: "题目" },
-  { prop: "teacherName", label: "指导老师" },
-  { prop: "guidanceTime", label: "时间" },
-  { prop: "guidancePlace", label: "地点" },
-  { prop: "budget", label: "经费" },
-  { prop: "reimburse", label: "是否已报销" },
-  { prop: "operators", label: "操作", width: 200 },
+  { prop: "projectpracticeCode", label: "实践课程编号" ,width:200},
+  { prop: "projectpracticeName", label: "实践课程名称",width: 250 },
+  { prop: "title", label: "题目",width: 250 },
+  { prop: "teacherName", label: "指导老师" ,width: 150},
+  { prop: "guidanceTime", label: "指导时间", width: 150 },
+  { prop: "guidancePlace", label: "指导地点" ,width: 150},
+  {prop: "studentRequirements", label: "最大可选人数",width:150 },
+  { prop: "studentHave", label: "已选人数",width:100 },
+  { prop: "studentNeed", label: "剩余人数" ,width:100},
+  { prop: "budget", label: "经费", width:100},
+  { prop: "reimburse", label: "是否已报销" ,width:150},
+  { prop: "operator", label: "操作", width: 250 ,fixed: "right"},
 ]);
 const page = reactive({
   index: 1,
@@ -254,8 +257,8 @@ function formatDate(dateString) {
 }
 // 新增/编辑弹窗相关
 let options = ref<FormOption>({
-  labelWidth: "140px",
-  span: 12,
+  labelWidth: "120px",
+  span: 22,
   list: [
     {
       type: "input",
@@ -289,13 +292,13 @@ let options = ref<FormOption>({
     },
     {
       type: "input",
-      label: "地点",
+      label: "指导地点",
       prop: "guidancePlace",
       required: true,
     },
     {
       type: "input",
-      label: "时间",
+      label: "指导时间",
       prop: "guidanceTime",
       required: true,
     },
@@ -347,13 +350,13 @@ let newoptions = ref<FormOption>({
     },
     {
       type: "input",
-      label: "地点",
+      label: "指导地点",
       prop: "guidance_place",
       required: true,
     },
     {
       type: "date",
-      label: "时间",
+      label: "指导时间",
       prop: "guidance_time",
       required: true,
     },

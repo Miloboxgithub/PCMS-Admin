@@ -9,23 +9,41 @@
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
           <!-- 文本框、数字框、下拉框、日期框、开关、上传 -->
-<div v-if="item.type === 'sss'" style="width: 100%; height: 100%; ">
-  <div style="width: 100%; height: 40px; border: 1px solid #ccc; border-radius: 5px; padding: 10px; display: flex;  align-items: center;">
-      <div style="color:#2272FB;">指定学生（{{numnum}}人）</div>
-      <el-input v-model="inputname" style="width: 240px" placeholder="学生姓名查询" />
-  </div>
-          <div class="scrollable-window">
-  <div class="window-content">
-    <el-table :data="stableData" class="custom-table-font-size" >
-    
-    <el-table-column prop="name" label="name" width="80" />
-    <el-table-column prop="sno" label="sno" width="80" />
-    <el-table-column prop="major" label="major" width="130" />
-    <el-table-column prop="class" label="class" width="60" />
-    <el-table-column prop="phone" label="phone" width="120" />
-  </el-table>
-  </div>
-</div></div>
+           <div style="width: 100%;" >
+          <el-alert v-if="item.type === 'alert'" show-icon  title="名称请按照格式填写,例:2023级电子科学技术专业项目工程实践1" type="info" :closable="false" />
+        </div>
+          <div v-if="item.type === 'sss'" style="width: 100%; height: 100%">
+            <div
+              style="
+                width: 100%;
+                height: 40px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
+                display: flex;
+                align-items: center;
+              "
+            >
+              <div style="color: #2272fb">指定学生（{{ numnum }}人）</div>
+              <el-input
+                v-model="inputname"
+                style="width: 240px"
+                placeholder="学生姓名查询"
+              />
+            </div>
+            <div class="scrollable-window">
+              <div class="window-content">
+                <el-table :data="stableData" class="custom-table-font-size">
+                  <el-table-column prop="name" label="name" width="80" />
+                  <el-table-column prop="sno" label="sno" width="80" />
+                  <el-table-column prop="major" label="major" width="130" />
+                  <el-table-column prop="class" label="class" width="60" />
+                  <el-table-column prop="phone" label="phone" width="120" />
+                </el-table>
+              </div>
+            </div>
+          </div>
+
           <el-input
             v-if="item.type === 'input'"
             v-model="form[item.prop]"
@@ -182,8 +200,8 @@ const stableData = ref([
     class: "1班",
     phone: "12345678903",
     major: "计算机科学与技术",
-  }
-])
+  },
+]);
 const { options, formData, edit, update, edits } = defineProps({
   options: {
     type: Object as PropType<FormOption>,
@@ -321,7 +339,7 @@ const rules: FormRules = options.list
     return {};
   })
   .reduce((acc, cur) => ({ ...acc, ...cur }), {});
-  function formatDate(dateString) {
+function formatDate(dateString) {
   // 创建 Date 对象
   const date = new Date(dateString);
 
@@ -345,10 +363,9 @@ const rules: FormRules = options.list
 }
 const formRef = ref<FormInstance>();
 const saveEdit = (formEl: FormInstance | undefined) => {
-  
   if (!formEl) return;
 
-    update(form.value);
+  update(form.value);
 
   //console.log(form.value, "form.value444444");
   // if (edits) {
@@ -367,7 +384,6 @@ const saveEdit = (formEl: FormInstance | undefined) => {
   //   }
   // }
 };
-
 
 const handleAvatarSuccess: UploadProps["onSuccess"] = (
   response,
