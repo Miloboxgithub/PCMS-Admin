@@ -1,0 +1,26 @@
+{
+    "list": [
+        {
+            "id": 1,
+            "name": "会议室1",
+            "num": "123",
+            "lou": "1楼",
+            "status": true
+        },
+        {
+            "id": 2,
+            "name": "会议室2",
+            "num": "23",
+            "lou": "12楼",
+            "status": true
+        },
+        {
+            "id": 3,
+            "name": "会议室3",
+            "num": "12",
+            "lou": "17楼",
+            "status": false
+        }
+    ],
+    "pageTotal": 3
+}

@@ -17,7 +17,13 @@
         <template #reimburse="{ rows }">
           <el-tag type="warning" v-if="rows.reimburse == 0">未报销</el-tag>
           <el-tag type="success" v-else-if="rows.reimburse == 1">已报销</el-tag>
+          
         </template>
+        <template #releaseStatus="{ rows }">
+          <el-tag type="warning" v-if="rows.releaseStatus == 0">未发布</el-tag>
+          <el-tag type="success" v-else-if="rows.releaseStatus == 1">已发布</el-tag>
+        </template>
+        
         <template #toolbarBtn>
           <!-- <el-button
             type="warning"
@@ -78,6 +84,10 @@
           <el-tag type="warning" v-if="rows.reimburse == 0">未报销</el-tag>
           <el-tag type="success" v-else-if="rows.reimburse == 1">已报销</el-tag>
         </template>
+        <template #fabu="{ rows }">
+          <el-tag type="warning" v-if="rows.releaseStatus == 0">未发布</el-tag>
+          <el-tag type="success" v-else-if="rows.releaseStatus == 1">已发布</el-tag>
+        </template>
       </TableDetail>
     </el-dialog>
   </div>
@@ -119,7 +129,7 @@ const query = reactive({
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "题目查询：", prop: "TitleName" },
   { type: "input", label: "名称查询", prop: "projectpracticeName" },
-  { type: "input", label: "教师查询：", prop: "teacherName" },
+  { type: "input", label: "工号/姓名：", prop: "teacherName" },
 ]);
 
 // 表格相关
@@ -128,16 +138,18 @@ let columns = ref([
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
   { prop: "projectpracticeCode", label: "实践课程编号" ,width:200},
-  { prop: "projectpracticeName", label: "实践课程名称",width: 250 },
+  //{ prop: "projectpracticeName", label: "实践课程名称",width: 250 },
   { prop: "title", label: "题目",width: 250 },
   { prop: "teacherName", label: "指导老师" ,width: 150},
+  { prop: "teacherSno", label: "工号" ,width: 150},
   { prop: "guidanceTime", label: "指导时间", width: 150 },
   { prop: "guidancePlace", label: "指导地点" ,width: 150},
   {prop: "studentRequirements", label: "最大可选人数",width:150 },
   { prop: "studentHave", label: "已选人数",width:100 },
   { prop: "studentNeed", label: "剩余人数" ,width:100},
   { prop: "budget", label: "经费", width:100},
-  { prop: "reimburse", label: "是否已报销" ,width:150},
+  {prop: "releaseStatus", label: "是否发布",width:100 },
+  { prop: "reimburse", label: "是否已报销" ,width:100},
   { prop: "operator", label: "操作", width: 250 ,fixed: "right"},
 ]);
 const page = reactive({
@@ -450,6 +462,10 @@ const handleView = (row: User) => {
       label: "指导老师",
     },
     {
+      prop: "teacherSno",
+      label: "工号",
+    },
+    {
       prop: "studentRequirements",
       label: "最大可选人数",
     },
@@ -481,6 +497,10 @@ const handleView = (row: User) => {
       prop: "status",
       label: "是否报销",
     },
+    {
+      prop:"fabu",
+      label:"发布状态"
+    }
   ];
   visible1.value = true;
 };

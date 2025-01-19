@@ -1,0 +1,26 @@
+{
+    "list": [
+        {
+            "id": 1,
+            "name": "A老师",
+            "phone": "13800138000",
+            "status": true,
+            "num":"327846832"
+        },
+        {
+            "id": 2,
+            "name": "B老师",
+            "phone": "126637575",
+            "status": false,
+            "num":"354254666"
+        },
+        {
+            "id": 3,
+            "name": "C老师",
+            "phone": "1465737575",
+            "status": true,
+            "num":"65754666"
+        }
+    ],
+    "pageTotal": 3
+}
