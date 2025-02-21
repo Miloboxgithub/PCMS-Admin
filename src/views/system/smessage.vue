@@ -32,7 +32,7 @@
               <el-icon style="margin-right: 5px"><el-icon><Bottom /></el-icon></el-icon>
               下载模板
             </el-button>
-          <el-button type="primary" @click="daoru()">
+          <el-button type="primary" @click="openUploadDialog()">
               <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
               批量导入
             </el-button>
@@ -40,6 +40,7 @@
               <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
               导出
             </el-button>
+            
         </template>
       </TableCustom>
     </div>
@@ -72,6 +73,37 @@
         </template>
       </TableDetail>
     </el-dialog>
+    <el-dialog
+    v-model="uploadDialogVisible"
+    title="请选择要导入学生年级专业"
+    width="500"
+  >
+  <el-form ref="form" label-width="120px">
+    <el-form-item label="专业" required>
+      <el-select v-model="mmm" placeholder="请选择专业">
+        <el-option
+          v-for="item in majors"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </el-form-item>
+    <el-form-item label="年级" required>
+      <el-select v-model="ggg" placeholder="请选择年级">
+        <el-option
+          v-for="item in grades"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="handleFormSubmit">确认</el-button>
+    </el-form-item>
+  </el-form>
+  </el-dialog>
   </div>
 </template>
 
@@ -80,6 +112,7 @@ import { ref, reactive } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
+
 import {
   fetchStudentData,
   DeleteStudentData,
@@ -112,6 +145,58 @@ const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "查询：", prop: "sno" },
 ]);
 
+// 初始化专业和年级的响应式变量
+const mmm = ref('');
+const ggg = ref('');
+
+// 专业数据
+const majors = ref([
+  { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+  { label: "电子科学与技术", value: "电子科学与技术" },
+  { label: "自动化", value: "自动化" },
+  { label: "机器人工程", value: "机器人工程" },
+]);
+const mappings = {
+  "机械设计制作及其自动化": "0101",
+  "电子科学与技术": "0102",
+  "机器人工程": "0104",
+  "自动化": "0103",
+};
+// 生成最近四年的年级数据
+const currentYear = new Date().getFullYear();
+const grades = ref([]);
+for (let i = 0; i < 4; i++) {
+  const gradeYear = currentYear - i;
+  grades.value.push({
+    label: `${gradeYear}`,
+    value: `${gradeYear}`,
+  });
+}
+
+// 表单提交处理函数
+const handleSubmit = () => {
+  console.log('Selected Major:', mmm.value);
+  console.log('Selected Grade:', ggg.value);
+  // 在这里可以添加更多的逻辑，例如发送数据到服务器
+  daoru(mmm.value, mappings[mmm.value],ggg.value);
+  uploadDialogVisible.value = false;
+};
+
+// 监听表单提交事件
+const form = ref(null);
+const handleFormSubmit = () => {
+  if (!mmm.value || !ggg.value) {
+    ElMessage.error('请先选择专业和年级');
+    return;
+  }
+  handleSubmit();
+};
+const openUploadDialog = () => {
+  // 设置弹窗可见
+  uploadDialogVisible.value = true;
+};
+
+const uploadDialogVisible = ref(false);
 // 表格相关
 let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
@@ -190,7 +275,7 @@ async function daochu() {
     })
     .catch(() => {});
 }
-const daoru = async () => {
+const daoru = async (a,b,c) => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = ".xlsx, .xls"; // 限制只能选择Excel文件
@@ -210,13 +295,29 @@ const daoru = async () => {
     // }
 
     try {
-      const formData = new FormData();
-      formData.append("teacherfile", file);
+      // const formData = new FormData();
+      // formData.append("studentfile", file);
+      // formData.append("majorname", a); // 添加专业名称参数
+      // formData.append("majorcode", b); // 添加专业代码参数
+      // formData.append("grade", c); // 添加年级参数
+      // console.log(formData, "formData");
+            // 构建一个普通对象来存储表单数据
+            const formDataObj = {
+        studentfile: file,
+        majorname: a,
+        majorcode: b,
+        grade: c
+      };
 
-      const response = axios.post('/api/superadmin/createbatchstudent', formData, {
+      // 创建 FormData 对象并填充数据
+      const formData = new FormData();
+      for (const key in formDataObj) {
+        formData.append(key, formDataObj[key]);
+      }
+      console.log(formDataObj, "formData");
+      const response = axios.post('/api/superadmin/createbatchstudent', formDataObj, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          // 如果需要认证，请添加认证头
+          
           Authorization: localStorage.getItem("vuems_token"),
         },
       });

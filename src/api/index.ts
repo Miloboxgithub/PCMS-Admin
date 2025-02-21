@@ -26,7 +26,7 @@ export const fetchAdminData = async () => {
 //获取日志
 // export const fetchLogData = async (e) => {
 //   try {
-    
+
 //   }
 // };
 //分页获取实践课程
@@ -45,7 +45,7 @@ export const fetchCourseData = async (e, p) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    //console.log(res.data, "---");
+    console.log(res.data, "---");
     let ans = {
       ProjectPracticeInfoList: res.data.data.ProjectPracticeInfoList,
       total: res.data.data.count,
@@ -216,17 +216,39 @@ export const exportCourseData = async () => {
     return error.message;
   }
 };
+function isNumber(str) {
+  return !isNaN(Number(str));
+}
 //分页获取教师出题信息
-export const fetchTeacherCourseData = async (e, p,esp,c,n,t) => {
+export const fetchTeacherCourseData = async (e, p, esp, c, n, t,q,b) => {
+  let ttt = {
+    Page: e,
+        Size: 20,
+        GuidancePlace: n,
+        ReleaseStatus: q,
+        Reimburse: b,
+        TeacherName: isNumber(c) ? "" : c,
+        //ProjectpracticeName: n,
+        ProjectpracticeCode: esp,
+        TeacherSno: isNumber(c) ? c : "",
+        StudentRequirements: t,
+        Type: "000000",
+        Reserve: "0",
+  }
+  console.log(ttt);
   try {
     let res = await axios.get("/api/admin/getsettopicbypage", {
       params: {
         Page: e,
         Size: 20,
-        TeacherName: t,
-        ProjectpracticeName: n,
+        GuidancePlace: n,
+        ReleaseStatus: q,
+        Reimburse: b,
+        TeacherName: isNumber(c) ? "" : c,
+        //ProjectpracticeName: n,
         ProjectpracticeCode: esp,
-        TitleName: c,
+        TeacherSno: isNumber(c) ? c : "",
+        StudentRequirements: t,
         Type: "000000",
         Reserve: "0",
       },
@@ -234,7 +256,7 @@ export const fetchTeacherCourseData = async (e, p,esp,c,n,t) => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    //console.log(res.data);
+    console.log(res.data);
     let ans = {
       SetTopicInfoList: res.data.data.SetTopicInfoList,
       total: res.data.data.count,
@@ -246,7 +268,45 @@ export const fetchTeacherCourseData = async (e, p,esp,c,n,t) => {
     return error.message;
   }
 };
-
+//获取教师出题信息
+export const TeacherCourseData = async (p,c) => {
+  try {
+    let res = await axios.get("/api/admin/getsettopic", {
+      params: {
+         projectpractice_code:p,
+    code:c
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
+//搜索学生
+export const SerachStudent = async (e) => {
+  try {
+    let res = await axios.get("/api/openuse/getsepstudents", {
+      params: {
+        content:e,
+      },
+      headers: {
+        Authorization: localStorage.getItem("vuems_token"),
+      },
+    });
+    console.log(res.data);
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    //返回登录页
+    return error.message;
+  }
+};
 //新建教师课题
 export const createTeacherCourse = async (e) => {
   try {
@@ -325,18 +385,18 @@ export const exportTeacherCourseData = async (e) => {
     let res = await axios.get("/api/admin/getexportsettopic", {
       params: {
         TeacherName: "",
-    ProjectpracticeName:"",
-    ProjectpracticeCode:e,
-    TitleName:"",
-    Type: "000000",
-    Reserve: "0"
+        ProjectpracticeName: "",
+        ProjectpracticeCode: e,
+        TitleName: "",
+        Type: "000000",
+        Reserve: "0",
       },
       headers: {
         Authorization: localStorage.getItem("vuems_token"),
       },
       responseType: "blob",
     });
-    //console.log(res.data);
+    console.log(res);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -344,8 +404,65 @@ export const exportTeacherCourseData = async (e) => {
     return error.message;
   }
 };
+//编辑教师出题
+//新建教师课题
+export const editTeacherCourse = async (e) => {
+  let ee ={
+    projectPracticeCode: e.projectpracticeCode,
+    projectPracticeName: e.projectpracticeName,
+    title: e.title,
+    content: e.content,
+    code: e.code,
+    guidance_place: e.guidancePlace,
+    guidance_time: e.guidanceTime,
+    budget: e.budget,
+    studentRequirements: e.studentRequirements,
+    releaseStatus: e.releaseStatus,
+    resultDisplay: e.resultDisplay,
+    appointStudent: e.appointStudent.map((item) => item.sno),
+    deleteStudent: e.deleteStudent.map((item) => item.sno),
+    teacher_name: e.teacherName,
+    teacher_sno: e.teacherSno,
+    reimburse: e.reimburse,
+  }
+  console.log(ee,'hhhff-----------');
+  try {
+    let res = await axios.post(
+      "/api/admin/updatesettopic",
+      {
+        projectPracticeCode: e.projectpracticeCode,
+        projectPracticeName: e.projectpracticeName,
+        title: e.title,
+        content: e.content,
+        code: e.code,
+        guidance_place: e.guidancePlace,
+        guidance_time: e.guidanceTime,
+        budget: e.budget,
+        studentRequirements: e.studentRequirements,
+        releaseStatus: e.releaseStatus,
+        resultDisplay: e.resultDisplay,
+        appointStudent: e.appointStudent.map((item) => item.sno),
+        deleteStudent: e.deleteStudent.map((item) => item.sno),
+        teacher_name: e.teacherName,
+        teacher_sno: e.teacherSno,
+        //reimburse: e.reimburse,
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("vuems_token"),
+        },
+      }
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error.message);
+    //返回登录页
+    return error.message;
+  }
+};
 //分页获取学生选课信息
-export const fetchStudentCourseData = async (e, p,esp,n,s) => {
+export const fetchStudentCourseData = async (e, p, esp, n, s) => {
   try {
     let res = await axios.get("/api/admin/getselectcoursebypage", {
       params: {
@@ -371,7 +488,7 @@ export const fetchStudentCourseData = async (e, p,esp,n,s) => {
       total: res.data.data.Count,
       zhong: res.data.data.People,
       weixuan: res.data.data.PeopleNot,
-      yixuan: res.data.data.PeopleHave
+      yixuan: res.data.data.PeopleHave,
     };
     return ans;
   } catch (error) {
@@ -451,15 +568,15 @@ export const exportStudentCourseData = async (e) => {
   try {
     let res = await axios.get("/api/admin/getexportselectcourse", {
       params: {
-        ProjectpracticeCode:e,
-    StudentName: "",
-    StudentSno:"",
-    Phone:"",
-    Class:"",
-    TitleName:"",
-    TeacherName:"",
-    Type: "000000",
-    Reserve: "0"
+        ProjectpracticeCode: e,
+        StudentName: "",
+        StudentSno: "",
+        Phone: "",
+        Class: "",
+        TitleName: "",
+        TeacherName: "",
+        Type: "000000",
+        Reserve: "0",
       },
       headers: {
         Authorization: localStorage.getItem("vuems_token"),

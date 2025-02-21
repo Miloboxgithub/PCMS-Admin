@@ -49,6 +49,9 @@
             />
           </el-select> -->
           <div style="margin-left: 10px;">
+            <el-checkbox v-model="quanxuan" label="全部" border />
+          </div>
+          <div style="margin-left: 10px;">
             <el-checkbox v-model="yesxuan" label="已选课" border />
           </div>
           <div style="margin-left: 10px;"><el-checkbox v-model="noxuan" label="未选课" border /></div>
@@ -137,6 +140,7 @@ const startTime = ref("");
 const endTime = ref("");
 const yesxuan =ref(false);
 const noxuan =ref(false);
+const quanxuan = ref(true);
 // 查询相关
 const query = reactive({
   //name: "",
@@ -195,13 +199,27 @@ watch(practiceName, (newValue, oldValue) => {
 });
 watch(yesxuan, (newValue, oldValue) => {
   console.log(`yesxuan选中的值从 ${oldValue} 变为 ${newValue}`);
-
+  if(newValue==true){
+    noxuan.value=false;
+    quanxuan.value=false;
+  }
   // 在这里调用你需要的函数
   getData(1, 0);
 });
 watch(noxuan, (newValue, oldValue) => {
   console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
-
+  if(newValue==true){
+    yesxuan.value=false;
+    quanxuan.value=false;
+  }
+  // 在这里调用你需要的函数
+  getData(1, 0);
+})
+watch(quanxuan, (newValue, oldValue) => {
+  if(newValue==true){
+    yesxuan.value=false;
+    noxuan.value=false;
+  }
   // 在这里调用你需要的函数
   getData(1, 0);
 })
@@ -222,6 +240,9 @@ if (Projectpractice.value.length > 0) {
   practiceName.value = Projectpractice.value[0].value;
 }
 const getData = async (e, p) => {
+  if(yesxuan.value==false&&noxuan.value==false&&quanxuan.value==false){
+    quanxuan.value=true;
+  }
   const ress = await fetchStudentCourseData(e, p, practiceName.value, "", "");
   if (ress == "Request failed with status code 403") {
     goTologon();

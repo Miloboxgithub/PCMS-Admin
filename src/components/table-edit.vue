@@ -9,36 +9,101 @@
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
           <!-- 文本框、数字框、下拉框、日期框、开关、上传 -->
-           <div style="width: 100%;" >
-          <el-alert v-if="item.type === 'alert'" show-icon  title="名称请按照格式填写,例:2023级电子科学技术专业项目工程实践1" type="info" :closable="false" />
-        </div>
+          <div style="width: 100%">
+            <el-alert
+              v-if="item.type === 'alert'"
+              show-icon
+              title="名称请按照格式填写,例:2023级电子科学技术专业项目工程实践1"
+              type="info"
+              :closable="false"
+            />
+          </div>
           <div v-if="item.type === 'sss'" style="width: 100%; height: 100%">
+            <div style="border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px; width: 100%;">
             <div
               style="
                 width: 100%;
-                height: 40px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 10px;
+                height: auto;
+                margin-bottom: 10px;
                 display: flex;
                 align-items: center;
               "
             >
-              <div style="color: #2272fb">指定学生（{{ numnum }}人）</div>
+              <div style="color: #2272fb; font-size: 12px;">
+                指定学生（{{
+                  stableData.filter((item) => item.isappointment == 1).length
+                }}人）
+              </div>
+              <div style="color: #3b3f47; font-size: 12px">
+                未指定（{{
+                  stableData.filter((item) => item.isappointment == 0).length
+                }}人）
+              </div>
               <el-input
                 v-model="inputname"
-                style="width: 240px"
-                placeholder="学生姓名查询"
+                style="width: 240px; margin-left: 10px; margin-right: 10px"
+                placeholder="学生姓名/学号查询"
+              />
+              <el-button
+                @click="searchStudent(inputname)"
+                :icon="Search"
+                circle
               />
             </div>
+            <div class="window-content">
+                <el-table :data="searchData" class="custom-table-font-size">
+                  <el-table-column prop="name" label="姓名" width="60" />
+                  <el-table-column prop="sno" label="学号" width="100" />
+                  <el-table-column prop="major" label="专业" width="100" />
+                  <el-table-column prop="class" label="班级" width="50" />
+                  <el-table-column prop="phone" label="电话" width="100" />
+                  <el-table-column fixed="right" label="操作" min-width="60">
+                    <template #default="scope">
+                      <el-button
+                        link
+                        type="primary"
+                        size="small"
+                        @click.prevent="addRow(scope.$index)"
+                      >
+                        添加
+                      </el-button>
+                      
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+          </div>
             <div class="scrollable-window">
               <div class="window-content">
                 <el-table :data="stableData" class="custom-table-font-size">
-                  <el-table-column prop="name" label="name" width="80" />
-                  <el-table-column prop="sno" label="sno" width="80" />
-                  <el-table-column prop="major" label="major" width="130" />
-                  <el-table-column prop="class" label="class" width="60" />
-                  <el-table-column prop="phone" label="phone" width="120" />
+                  <el-table-column prop="name" label="姓名" width="60" />
+                  <el-table-column prop="sno" label="学号" width="100" />
+                  <el-table-column prop="major" label="专业" width="100" />
+                  <el-table-column label="是否被指定" width="80">
+                    <template #default="scope">
+                      <el-tag v-if="scope.row.isappointment == 1"
+                        >被指定</el-tag
+                      >
+                      <el-tag v-else-if="scope.row.isappointment == 0" type="info">未指定</el-tag>
+                      <el-tag v-else-if="scope.row.isappointment == 2" type="warning">待指定</el-tag>
+                    </template>
+                  </el-table-column>
+                  <el-table-column prop="class" label="班级" width="50" />
+                  <el-table-column prop="phone" label="电话" width="100" />
+                  <el-table-column fixed="right" label="操作" min-width="60">
+                    <template #default="scope">
+                      <el-button
+                        link
+                        type="primary"
+                        size="small"
+                        @click.prevent="deleteRow(scope.$index)"
+                      >
+                        删除
+                      </el-button>
+                    </template>
+                  </el-table-column>
                 </el-table>
               </div>
             </div>
@@ -175,33 +240,30 @@
 
 <script lang="ts" setup>
 import { FormOption } from "@/types/form-option";
-import { FormInstance, FormRules, UploadProps } from "element-plus";
+import { FormInstance, FormRules, UploadProps,ElMessage } from "element-plus";
 import { PropType, ref } from "vue";
+import { ElMessageBox } from "element-plus";
+import {
+  Check,
+  Delete,
+  Edit,
+  Message,
+  Search,
+  Star,
+} from "@element-plus/icons-vue";
+import { TeacherCourseData, SerachStudent } from "@/api";
 const numnum = ref(0);
 const inputname = ref("");
-const stableData = ref([
-  {
-    name: "张三",
-    sno: "20210001",
-    class: "1班",
-    phone: "12345678901",
-    major: "计算机科学与技术",
-  },
-  {
-    name: "李四",
-    sno: "20210002",
-    class: "1班",
-    phone: "12345678902",
-    major: "计算机科学与技术",
-  },
-  {
-    name: "王五",
-    sno: "20210003",
-    class: "1班",
-    phone: "12345678903",
-    major: "计算机科学与技术",
-  },
-]);
+const stableData = ref([]);
+const searchData = ref([]);
+const delstableData = ref([]);
+const deleteRow = (index: number) => {
+  if(stableData.value[index].isappointment!=2){
+    delstableData.value.push(stableData.value[index]);
+  }
+  stableData.value.splice(index, 1);
+};
+
 const { options, formData, edit, update, edits } = defineProps({
   options: {
     type: Object as PropType<FormOption>,
@@ -325,8 +387,25 @@ options.list.forEach((item) => {
   ];
 });
 const form = ref({ ...(edit ? formData : {}) });
-//console.log(form.value.password, "form.value");
+
 form.value.password = "";
+const getData = async (e, p) => {
+  const res = await TeacherCourseData(e, p);
+  console.log(res.data.SetTopic.Enrolls, "res");
+  let ese = res.data.SetTopic.Enrolls;
+  stableData.value = [];
+  ese.forEach((item) => {
+    stableData.value.push({
+      name: item.Student.name,
+      sno: item.Student.sno,
+      class: item.Student.class,
+      phone: item.Student.phone,
+      major: item.Student.majorName,
+      isappointment: item.isappointment,
+    });
+  });
+};
+getData(form.value.projectpracticeCode, form.value.code);
 const rules: FormRules = options.list
   .map((item) => {
     if (item.required) {
@@ -364,27 +443,48 @@ function formatDate(dateString) {
 const formRef = ref<FormInstance>();
 const saveEdit = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-
+  form.value.appointStudent=stableData.value;
+  form.value.deleteStudent=delstableData.value;
+  //console.log(form.value, "form.value");
   update(form.value);
-
-  //console.log(form.value, "form.value444444");
-  // if (edits) {
-  //   //console.log(form.value.roomName,'editsform');
-  //   DeleteRoom(form);
-  // } else {
-  //   if (!edit) {
-  //     //console.log(form.value,'增添数据');
-  //     if ("role" in form.value) createRoom2(form.value);
-  //     else createRoom(form.value);
-  //   } else {
-  //     //console.log(form.value,'修改数据');
-  //     if ("role" in form.value) changeRoom2(form.value);
-  //     else if ("appointmentPerson" in form.value) changeRoom3(form.value);
-  //     else changeRoom(form.value);
-  //   }
-  // }
 };
-
+const addRow = (k) => {
+  let i = searchData.value[k];
+    // 检查 stableData.value 中是否已存在相同 sno 的数据
+    const isDuplicate = stableData.value.some(item => item.sno === i.sno);
+    if (!isDuplicate) {
+    stableData.value.push({
+      name: i.name,
+      sno: i.sno,
+      class: i.class,
+      phone: i.phone,
+      major: i.major,
+      isappointment: 2,
+    });
+  } else {
+    ElMessage.error('该学生已指定');
+  }
+}
+const searchStudent = async (e) => {
+  const res = await SerachStudent(e);
+  console.log(res.data, "res.data");
+  //if()
+  if(res.data.message =='failed'){
+    ElMessage.error('搜索失败')
+  }
+  else{
+    searchData.value = [];
+      searchData.value.push({
+        name: res.data.Studentinfo.name,
+        sno: res.data.Studentinfo.sno,
+        class: res.data.Studentinfo.class,
+        phone: res.data.Studentinfo.phone,
+        major: res.data.Studentinfo.majorName,
+        grade: res.data.Studentinfo.grade,
+      })
+    
+  }
+};
 const handleAvatarSuccess: UploadProps["onSuccess"] = (
   response,
   uploadFile

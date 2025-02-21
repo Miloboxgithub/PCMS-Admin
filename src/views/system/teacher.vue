@@ -42,6 +42,17 @@
               <el-icon style="margin-right: 5px"><CirclePlus /></el-icon>
               增添不可预约时段
             </el-button> -->
+            <div style="margin-left: 10px;">
+            <el-checkbox v-model="quanbu" label="全部" border />
+          </div>
+            <div style="margin-left: 10px;">
+            <el-checkbox v-model="yesfabu" label="已发布" border />
+          </div>
+          <div style="margin-left: 10px;"><el-checkbox v-model="nofabu" label="未发布" border /></div>
+          <div style="margin-left: 10px;">
+            <el-checkbox v-model="yesbaoxiao" label="已报销" border />
+          </div>
+          <div style="margin-left: 10px;"><el-checkbox v-model="nobaoxiao" label="未报销" border /></div>
           <el-select
             v-model="practiceName"
             placeholder="Select"
@@ -103,7 +114,7 @@ import {
   DeleteTeacherCourseData,
   SearchCourse,
   createCourse,
-  updateCourse,
+  editTeacherCourse,
   exportTeacherCourseData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
@@ -113,6 +124,11 @@ import { FormOption, FormOptionList } from "@/types/form-option";
 import { ElMessageBox } from "element-plus";
 import axios from "axios";
 import { useRouter } from "vue-router";
+const yesfabu = ref(false);
+const nofabu = ref(false);
+const yesbaoxiao = ref(false);
+const nobaoxiao = ref(false);
+const quanbu = ref(true);
 const router = useRouter();
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
@@ -127,9 +143,9 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "题目查询：", prop: "TitleName" },
-  { type: "input", label: "名称查询", prop: "projectpracticeName" },
   { type: "input", label: "工号/姓名：", prop: "teacherName" },
+  { type: "input", label: "指导地点", prop: "GuidancePlace" },
+  { type: "input", label: "选课人数", prop: "StudentRequirements" },
 ]);
 
 // 表格相关
@@ -137,7 +153,7 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
-  { prop: "projectpracticeCode", label: "实践课程编号" ,width:200},
+  { prop: "code", label: "课题编号" ,width:200},
   //{ prop: "projectpracticeName", label: "实践课程名称",width: 250 },
   { prop: "title", label: "题目",width: 250 },
   { prop: "teacherName", label: "指导老师" ,width: 150},
@@ -166,6 +182,51 @@ watch(practiceName, (newValue, oldValue) => {
   // 在这里调用你需要的函数
   getData(1, 0);
 });
+watch(quanbu, (newValue, oldValue) => {
+  if(newValue == true){
+    yesfabu.value = false;
+    nofabu.value = false;
+    yesbaoxiao.value = false;
+    nobaoxiao.value = false;
+  }
+  getData(1, 0);
+})
+watch(yesfabu, (newValue, oldValue) => {
+  //console.log(`yesxuan选中的值从 ${oldValue} 变为 ${newValue}`);
+  if(newValue == true){
+    quanbu.value = false;
+    nofabu.value = false;
+  }
+  // 在这里调用你需要的函数
+  getData(1, 0);
+});
+watch(nofabu, (newValue, oldValue) => {
+  //console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
+  if(newValue == true){
+    quanbu.value = false;
+    yesfabu.value = false;
+  }
+  // 在这里调用你需要的函数
+  getData(1, 0);
+})
+watch(nobaoxiao, (newValue, oldValue) => {
+  //console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
+  if(newValue == true){
+    yesbaoxiao.value = false;
+    quanbu.value = false;
+  }
+  // 在这里调用你需要的函数
+  getData(1, 0);
+})
+watch(yesbaoxiao, (newValue, oldValue) => {
+  //console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
+  if(newValue == true){
+    nobaoxiao.value = false;
+    quanbu.value = false;
+  }
+  // 在这里调用你需要的函数
+  getData(1, 0);
+})
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 let esp = localStorage.getItem("v_codes");
@@ -183,7 +244,24 @@ if (Projectpractice.value.length > 0) {
   practiceName.value = Projectpractice.value[0].value;
 }
 const getData = async (e, p) => {
-  const ress = await fetchTeacherCourseData(e, p, practiceName.value,'','','');
+  if(yesfabu.value==false&&nofabu.value==false&&yesbaoxiao.value==false&&nobaoxiao.value==false){
+    quanbu.value = true;
+  }
+  let q='-1'
+  let b='-1'
+  if (yesfabu.value == true&&nofabu.value == false) {
+    q = '1'
+  }
+  if (yesfabu.value == false&&nofabu.value == true) {
+    q = '0'
+  }
+  if (yesbaoxiao.value == true&& nobaoxiao.value == false) {
+    b = '1'
+  }
+  if (yesbaoxiao.value == false&& nobaoxiao.value == true) {
+    b = '0'
+  }
+  const ress = await fetchTeacherCourseData(e, p, practiceName.value,'','','-1',q,b);
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -196,10 +274,28 @@ const getData = async (e, p) => {
 getData(1, 0);
 
 const handleSearch = async (queryData) => {
-  if (!queryData.TitleName&&!queryData.projectpracticeName&&!queryData.teacherName) {
+  if (!queryData.StudentRequirements&&!queryData.GuidancePlace&&!queryData.teacherName) {
     getData(1, 0);
   } else {
-    const ress = await fetchTeacherCourseData(1, 0, practiceName.value, queryData.TitleName, queryData.projectpracticeName, queryData.teacherName);
+    let q='-1'
+    let b='-1'
+  if (yesfabu.value == true&&nofabu.value == false) {
+    q = '1'
+  }
+  if (yesfabu.value == false&&nofabu.value == true) {
+    q = '0'
+  }
+  if (yesbaoxiao.value == true&& nobaoxiao.value == false) {
+    b = '1'
+  }
+  if (yesbaoxiao.value == false&& nobaoxiao.value == true) {
+    b = '0'
+  }
+  let tst = queryData.StudentRequirements;
+  if(queryData.StudentRequirements==undefined){
+    tst='-1'
+  }
+    const ress = await fetchTeacherCourseData(1, 0, practiceName.value, queryData.teacherName, queryData.GuidancePlace, tst, q,b);
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
@@ -215,6 +311,7 @@ async function daochu() {
   })
     .then(async () => {
       const res = await exportTeacherCourseData(practiceName.value);
+      console.log(res,practiceName.value)
       if (res.code == 50)
         ElMessage({
           type: "warning",
@@ -272,30 +369,30 @@ let options = ref<FormOption>({
   labelWidth: "120px",
   span: 22,
   list: [
-    {
-      type: "input",
-      label: "题目编号",
-      prop: "projectpracticeCode",
-      required: true,
-    },
+    // {
+    //   type: "input",
+    //   label: "题目编号",
+    //   prop: "projectpracticeCode",
+    //   required: true,
+    // },
     {
       type: "sss",
-      label: "实践课程编号",
+      label: "选课学生管理",
       prop: "projectpracticeCode",
       required: true,
     },
-    {
-      type: "input",
-      label: "题目",
-      prop: "title",
-      required: true,
-    },
-    {
-      type: "input",
-      label: "指导老师",
-      prop: "teacherName",
-      required: true,
-    },
+    // {
+    //   type: "input",
+    //   label: "题目",
+    //   prop: "title",
+    //   required: true,
+    // },
+    // {
+    //   type: "input",
+    //   label: "指导老师",
+    //   prop: "teacherName",
+    //   required: true,
+    // },
     {
       type: "input",
       label: "最大可选人数",
@@ -405,18 +502,14 @@ const mapping = {
   "自动化": "0103",
 };
 const updateData = async (e) => {
-  e.selectEtime = formatDate(e.selectEtime);
-  e.selectStime = formatDate(e.selectStime);
-  e.titleEtime = formatDate(e.titleEtime);
-  e.titleStime = formatDate(e.titleStime);
-  e.majorCode = mapping[e.majorName];
+
   if (isEdit.value) {
     console.log(e, "编辑数据");
 
     if ("projectpracticeCode" in rowData.value) {
       e.projectpracticeCode = rowData.value.projectpracticeCode;
-      const res = await updateCourse(e);
-      console.log(res, "更新数据");
+      const res = await editTeacherCourse(e);
+      console.log(res, "更新数据---");
     } else {
       console.log("无数据");
     }
