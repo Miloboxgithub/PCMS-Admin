@@ -32,7 +32,7 @@
               <el-icon style="margin-right: 5px"><el-icon><Bottom /></el-icon></el-icon>
               下载模板
             </el-button>
-          <el-button type="primary" @click="daoru()">
+          <el-button type="primary" @click="openUploadDialog()">
               <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
               批量导入
             </el-button>
@@ -72,6 +72,28 @@
         </template>
       </TableDetail>
     </el-dialog>
+    <el-dialog
+    v-model="uploadDialogVisible"
+    title="请选择要导入教师专业"
+    width="500"
+  >
+  <el-form ref="form" label-width="120px">
+    <el-form-item label="专业" required>
+      <el-select v-model="mmm" placeholder="请选择专业">
+        <el-option
+          v-for="item in majors"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+    </el-form-item>
+
+    <el-form-item>
+      <el-button type="primary" @click="handleFormSubmit">确认</el-button>
+    </el-form-item>
+  </el-form>
+  </el-dialog>
   </div>
 </template>
 
@@ -111,7 +133,44 @@ const query = reactive({
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "查询：", prop: "sno" },
 ]);
+// 初始化专业和年级的响应式变量
+const mmm = ref('');
+// 专业数据
+const majors = ref([
+  { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
+  { label: "电子科学与技术", value: "电子科学与技术" },
+  { label: "自动化", value: "自动化" },
+  { label: "机器人工程", value: "机器人工程" },
+]);
+const mappings = {
+  "机械设计制造及其自动化": "0101",
+  "电子科学与技术": "0102",
+  "机器人工程": "0104",
+  "自动化": "0103",
+};
+// 表单提交处理函数
+const handleSubmit = () => {
+  console.log('Selected Major:', mmm.value);
+  // 在这里可以添加更多的逻辑，例如发送数据到服务器
+  daoru(mmm.value, mappings[mmm.value]);
+  uploadDialogVisible.value = false;
+};
 
+// 监听表单提交事件
+const form = ref(null);
+const handleFormSubmit = () => {
+  if (!mmm.value ) {
+    ElMessage.error('请先选择专业');
+    return;
+  }
+  handleSubmit();
+};
+const openUploadDialog = () => {
+  // 设置弹窗可见
+  uploadDialogVisible.value = true;
+};
+
+const uploadDialogVisible = ref(false);
 // 表格相关
 let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
@@ -190,12 +249,12 @@ async function daochu() {
     })
     .catch(() => {});
 }
-const daoru = async () => {
+const daoru = async (a,b) => {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = ".xlsx, .xls"; // 限制只能选择Excel文件
 
-  input.addEventListener("change", (e: Event) => {
+  input.addEventListener("change", async(e) => {
     const eventTarget = e.target as HTMLInputElement;
     const files = eventTarget.files;
     if (files.length === 0) {
@@ -208,24 +267,52 @@ const daoru = async () => {
     //   alert('File size should be less than 500KB.');
     //   return;
     // }
-
     try {
       const formData = new FormData();
       formData.append("teacherfile", file);
-
-      const response = axios.post('/api/superadmin/createbatchteacher', formData, {
+      formData.append('majorname', a);
+      formData.append('majorcode', b);
+      const response =await axios.post('/api/superadmin/createbatchteacher', formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          // 如果需要认证，请添加认证头
+          
           Authorization: localStorage.getItem("vuems_token"),
+          
         },
+        responseType: "blob",
       });
 
-      console.log("File uploaded successfully:", response);
-      ElMessage.success("文件导入成功");
-      setTimeout(() => {
-        getData(1, 0);
-      }, 500);
+      // 假设后端返回状态码200表示成功
+      if (response.data.code != 50) {
+        console.log("File uploaded successfully:", response);
+        ElMessage.success("文件导入成功");
+        setTimeout(() => {
+          getData(1, 0);
+        }, 500);
+        // 检查是否有错误信息表格返回
+      if (response.data.size!=52) {
+        
+        // 触发弹窗让用户选择是否下载错误表格
+        ElMessageBox.confirm(
+          `导入表格有错误信息，是否下载错误教师名单？`,
+          '提示',
+          {
+            confirmButtonText: '下载',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+        ).then(() => {
+          console.log('User confirmed download');
+          const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  downloadErrorFile(blob, 'error_report.xlsx');
+        }).catch(() => {
+          // 用户取消下载
+          console.log('Download cancelled');
+        });
+      }
+      } else {
+        ElMessage.error("导入错误");
+      }
+      
     } catch (error) {
       console.error("Error uploading file:", error);
       ElMessage.error("文件导入失败");
@@ -233,6 +320,18 @@ const daoru = async () => {
   });
 
   input.click(); // 触发点击事件以打开文件选择对话框
+};
+const downloadErrorFile = (blob, fileName) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }, 100);
 };
 async function moban() {
   ElMessageBox.confirm("确定要下载模板吗？", "提示", {
@@ -327,7 +426,7 @@ let options = ref<FormOption>({
       prop: "major_name",
       required: true,
       options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+        { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
         { label: "电子科学与技术", value: "电子科学与技术" },
         { label: "自动化", value: "自动化" },
         { label: "机器人工程", value: "机器人工程" },
@@ -369,7 +468,7 @@ let newoptions = ref<FormOption>({
       prop: "major_name",
       required: true,
       options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+        { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
         { label: "电子科学与技术", value: "电子科学与技术" },
         { label: "自动化", value: "自动化" },
         { label: "机器人工程", value: "机器人工程" },
@@ -389,7 +488,7 @@ const handleEdit = (row: User) => {
   getData(1, 0);
 };
 const mapping = {
-  机械设计制作及其自动化: "0101",
+  机械设计制造及其自动化: "0101",
   电子科学与技术: "0102",
   机器人工程: "0104",
   自动化: "0103",

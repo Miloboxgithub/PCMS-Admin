@@ -868,7 +868,7 @@ export const exportStudentData = async () => {
       },
       responseType: "blob",
     });
-    //console.log(res.data);
+    console.log(res);
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);

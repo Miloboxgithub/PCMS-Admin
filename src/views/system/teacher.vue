@@ -116,6 +116,7 @@ import {
   createCourse,
   editTeacherCourse,
   exportTeacherCourseData,
+  fetchAdminData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -227,6 +228,20 @@ watch(yesbaoxiao, (newValue, oldValue) => {
   // 在这里调用你需要的函数
   getData(1, 0);
 })
+const getadmindata = async () => {
+  const ress = await fetchAdminData();
+  if (ress.code != 50) {
+    let op = ress.data.propracticeList;
+    // let esp = [];
+    // op.forEach((item) => {
+    //   esp.push(item.projectPracticeCode);
+    // });
+    localStorage.setItem("v_codes", JSON.stringify(op));
+  } else {
+    goTologon();
+  }
+};
+getadmindata()
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 let esp = localStorage.getItem("v_codes");
@@ -496,7 +511,7 @@ const handleEdit = (row: User) => {
   getData(1, 0);
 };
 const mapping = {
-  "机械设计制作及其自动化": "0101",
+  "机械设计制造及其自动化": "0101",
   "电子科学与技术": "0102",
   "机器人工程": "0104",
   "自动化": "0103",

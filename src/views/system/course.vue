@@ -264,7 +264,7 @@ let options = ref({
       prop: "majorName",
       required: true,
       options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+        { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
         { label: "电子科学与技术", value: "电子科学与技术" },
         { label: "自动化", value: "自动化" },
         { label: "机器人工程", value: "机器人工程" },
@@ -335,7 +335,7 @@ let newoptions = ref({
       prop: "majorName",
       required: true,
       options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+        { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
         { label: "电子科学与技术", value: "电子科学与技术" },
         { label: "自动化", value: "自动化" },
         { label: "机器人工程", value: "机器人工程" },
@@ -398,7 +398,7 @@ const handleEdit = (row: User) => {
   getData(1, 0);
 };
 const mapping = {
-  机械设计制作及其自动化: "0101",
+  机械设计制造及其自动化: "0101",
   电子科学与技术: "0102",
   机器人工程: "0104",
   自动化: "0103",

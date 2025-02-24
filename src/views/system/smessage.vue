@@ -151,13 +151,13 @@ const ggg = ref('');
 
 // 专业数据
 const majors = ref([
-  { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+  { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
   { label: "电子科学与技术", value: "电子科学与技术" },
   { label: "自动化", value: "自动化" },
   { label: "机器人工程", value: "机器人工程" },
 ]);
 const mappings = {
-  "机械设计制作及其自动化": "0101",
+  "机械设计制造及其自动化": "0101",
   "电子科学与技术": "0102",
   "机器人工程": "0104",
   "自动化": "0103",
@@ -275,12 +275,12 @@ async function daochu() {
     })
     .catch(() => {});
 }
-const daoru = async (a,b,c) => {
+const daoru = async (a, b, c) => {
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = ".xlsx, .xls"; // 限制只能选择Excel文件
+  input.accept = ".xlsx, .xls";
 
-  input.addEventListener("change", (e: Event) => {
+  input.addEventListener("change", async (e) => {
     const eventTarget = e.target as HTMLInputElement;
     const files = eventTarget.files;
     if (files.length === 0) {
@@ -289,52 +289,72 @@ const daoru = async (a,b,c) => {
     }
 
     const file = files[0];
-    // if (file.size > 524288) { // 限制文件大小为500KB
-    //   alert('File size should be less than 500KB.');
-    //   return;
-    // }
-
     try {
-      // const formData = new FormData();
-      // formData.append("studentfile", file);
-      // formData.append("majorname", a); // 添加专业名称参数
-      // formData.append("majorcode", b); // 添加专业代码参数
-      // formData.append("grade", c); // 添加年级参数
-      // console.log(formData, "formData");
-            // 构建一个普通对象来存储表单数据
-            const formDataObj = {
-        studentfile: file,
-        majorname: a,
-        majorcode: b,
-        grade: c
-      };
-
-      // 创建 FormData 对象并填充数据
       const formData = new FormData();
-      for (const key in formDataObj) {
-        formData.append(key, formDataObj[key]);
-      }
-      console.log(formDataObj, "formData");
-      const response = axios.post('/api/superadmin/createbatchstudent', formDataObj, {
+      formData.append('studentfile', file);
+      formData.append('majorname', a);
+      formData.append('majorcode', b);
+      formData.append('grade',c);
+
+      const response = await axios.post('/api/superadmin/createbatchstudent', formData, {
         headers: {
-          
           Authorization: localStorage.getItem("vuems_token"),
         },
+        responseType: "blob",
       });
 
-      console.log("File uploaded successfully:", response);
-      ElMessage.success("文件导入成功");
-      setTimeout(() => {
-        getData(1, 0);
-      }, 500);
+      // 假设后端返回状态码200表示成功
+      if (response.data.code != 50) {
+        console.log("File uploaded successfully:", response);
+        ElMessage.success("文件导入成功");
+        setTimeout(() => {
+          getData(1, 0);
+        }, 500);
+        // 检查是否有错误信息表格返回
+      if (response.data.size!=52) {
+        
+        // 触发弹窗让用户选择是否下载错误表格
+        ElMessageBox.confirm(
+          `导入表格有错误信息，是否下载错误学生名单？`,
+          '提示',
+          {
+            confirmButtonText: '下载',
+            cancelButtonText: '取消',
+            type: 'warning',
+          }
+        ).then(() => {
+          console.log('User confirmed download');
+          const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  downloadErrorFile(blob, 'error_report.xlsx');
+        }).catch(() => {
+          // 用户取消下载
+          console.log('Download cancelled');
+        });
+      }
+      } else {
+        ElMessage.error("导入错误");
+      }
     } catch (error) {
       console.error("Error uploading file:", error);
       ElMessage.error("文件导入失败");
     }
   });
 
-  input.click(); // 触发点击事件以打开文件选择对话框
+  input.click();
 };
+const downloadErrorFile = (blob, fileName) => {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  }, 100);
+};
+
 async function moban() {
   ElMessageBox.confirm("确定要下载模板吗？", "提示", {
     type: "info",
@@ -448,7 +468,7 @@ let options = ref<FormOption>({
       prop: "major_name",
       required: true,
       options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+        { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
         { label: "电子科学与技术", value: "电子科学与技术" },
         { label: "自动化", value: "自动化" },
         { label: "机器人工程", value: "机器人工程" },
@@ -498,7 +518,7 @@ let newoptions = ref<FormOption>({
       prop: "major_name",
       required: true,
       options: [
-        { label: "机械设计制作及其自动化", value: "机械设计制作及其自动化" },
+        { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
         { label: "电子科学与技术", value: "电子科学与技术" },
         { label: "自动化", value: "自动化" },
         { label: "机器人工程", value: "机器人工程" },
@@ -518,7 +538,7 @@ const handleEdit = (row: User) => {
   getData(1, 0);
 };
 const mapping = {
-  "机械设计制作及其自动化": "0101",
+  "机械设计制造及其自动化": "0101",
   "电子科学与技术": "0102",
   "机器人工程": "0104",
   "自动化": "0103",

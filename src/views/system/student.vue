@@ -121,6 +121,7 @@ import {
   createStudentCourse,
   updateCourse,
   exportStudentCourseData,
+  fetchAdminData,
 } from "@/api";
 import TableCustom from "@/components/table-custom.vue";
 import TableDetail from "@/components/table-detail.vue";
@@ -223,6 +224,20 @@ watch(quanxuan, (newValue, oldValue) => {
   // 在这里调用你需要的函数
   getData(1, 0);
 })
+const getadmindata = async () => {
+  const ress = await fetchAdminData();
+  if (ress.code != 50) {
+    let op = ress.data.propracticeList;
+    // let esp = [];
+    // op.forEach((item) => {
+    //   esp.push(item.projectPracticeCode);
+    // });
+    localStorage.setItem("v_codes", JSON.stringify(op));
+  } else {
+    goTologon();
+  }
+};
+getadmindata()
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 let esp = localStorage.getItem("v_codes");
