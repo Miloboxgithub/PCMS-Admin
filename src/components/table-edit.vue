@@ -5,6 +5,7 @@
     :rules="rules"
     :label-width="options.labelWidth"
   >
+
     <el-row>
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
@@ -13,7 +14,7 @@
             <el-alert
               v-if="item.type === 'alert'"
               show-icon
-              title="名称请按照格式填写,例:2023级电子科学技术专业项目工程实践1"
+              title="请先选择年级专业后再选择实践课程名称"
               type="info"
               :closable="false"
             />
@@ -137,11 +138,26 @@
             :disabled="item.disabled"
             :placeholder="item.placeholder"
             clearable
+            @change="handleChange($event, item.prop, form[item.prop])"
           >
             <el-option
               v-for="opt in item.options"
               :label="opt.label"
               :value="opt.value"
+            ></el-option>
+            <!-- <el-option v-for="timm" :label="item.label" :value="item.value"></el-option> -->
+          </el-select>
+          <el-select
+            v-else-if="item.type === 'selectname'"
+            v-model="form[item.prop]"
+            :disabled="item.disabled"
+            :placeholder="item.placeholder"
+            clearable
+          >
+            <el-option
+              v-for="nnn in item.options"
+              :label="nnn.label"
+              :value="nnn.value"
             ></el-option>
             <!-- <el-option v-for="timm" :label="item.label" :value="item.value"></el-option> -->
           </el-select>
@@ -263,7 +279,90 @@ const deleteRow = (index: number) => {
   }
   stableData.value.splice(index, 1);
 };
-
+const ggg = ref('')
+const mam = ref('')
+const handleChange = (event, a, b) => {
+  console.log("事件对象：", event);
+  console.log("第一个自定义值：", a);
+  console.log("第二个自定义值：", b);
+  if(a=='grade'){
+    ggg.value = b
+  }
+  if(a=='majorName'){
+    mam.value = b
+  }
+  if(ggg.value&&mam.value){
+    options.list.forEach((item) => {
+      if(item.prop=='projectpracticeName'){
+        item.options = []
+        if(mam.value=='电子科学与技术'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'工程项目实践1',
+              value: ggg.value+mam.value+'工程项目实践1',
+            },
+            {
+              label: ggg.value+mam.value+'工程项目实践2',
+              value: ggg.value+mam.value+'工程项目实践2',
+            },
+            {
+              label: ggg.value+mam.value+'工程项目实践3',
+              value: ggg.value+mam.value+'工程项目实践3',
+            }
+          ]
+        }
+        if(mam.value=='机械设计制造及其自动化'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'基础实践',
+              value: ggg.value+mam.value+'基础实践',
+            },
+            {
+              label: ggg.value+mam.value+'中级实践',
+              value: ggg.value+mam.value+'中级实践',
+            },
+            {
+              label: ggg.value+mam.value+'高级实践',
+              value: ggg.value+mam.value+'高级实践',
+            }
+          ]
+        }
+        if(mam.value=='自动化'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'项目工作1',
+              value: ggg.value+mam.value+'项目工作1',
+            },
+            {
+              label: ggg.value+mam.value+'项目工作2',
+              value: ggg.value+mam.value+'项目工作2',
+            },
+            {
+              label: ggg.value+mam.value+'项目工作3',
+              value: ggg.value+mam.value+'项目工作3',
+            }
+          ]
+        }
+        if(mam.value=='机器人工程'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'基础实践1',
+              value: ggg.value+mam.value+'基础实践1',
+            },
+            {
+              label: ggg.value+mam.value+'基础实践2',
+              value: ggg.value+mam.value+'基础实践2',
+            },
+            {
+              label: ggg.value+mam.value+'基础实践3',
+              value: ggg.value+mam.value+'基础实践3',
+            }
+          ]
+        }
+      }
+    })
+  }
+};
 const { options, formData, edit, update, edits } = defineProps({
   options: {
     type: Object as PropType<FormOption>,
@@ -387,7 +486,8 @@ options.list.forEach((item) => {
   ];
 });
 const form = ref({ ...(edit ? formData : {}) });
-
+console.log(form.value, "form");
+console.log(options.list, "options.list");
 form.value.password = "";
 const getData = async (e, p) => {
   const res = await TeacherCourseData(e, p);

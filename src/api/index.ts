@@ -220,21 +220,21 @@ function isNumber(str) {
   return !isNaN(Number(str));
 }
 //分页获取教师出题信息
-export const fetchTeacherCourseData = async (e, p, esp, c, n, t,q,b) => {
+export const fetchTeacherCourseData = async (e, p, esp, c, n, t, q, b) => {
   let ttt = {
     Page: e,
-        Size: 20,
-        GuidancePlace: n,
-        ReleaseStatus: q,
-        Reimburse: b,
-        TeacherName: isNumber(c) ? "" : c,
-        //ProjectpracticeName: n,
-        ProjectpracticeCode: esp,
-        TeacherSno: isNumber(c) ? c : "",
-        StudentRequirements: t,
-        Type: "000000",
-        Reserve: "0",
-  }
+    Size: 20,
+    GuidancePlace: n,
+    ReleaseStatus: q,
+    Reimburse: b,
+    TeacherName: isNumber(c) ? "" : c,
+    //ProjectpracticeName: n,
+    ProjectpracticeCode: esp,
+    TeacherSno: isNumber(c) ? c : "",
+    StudentRequirements: t,
+    Type: "000000",
+    Reserve: "0",
+  };
   console.log(ttt);
   try {
     let res = await axios.get("/api/admin/getsettopicbypage", {
@@ -269,12 +269,12 @@ export const fetchTeacherCourseData = async (e, p, esp, c, n, t,q,b) => {
   }
 };
 //获取教师出题信息
-export const TeacherCourseData = async (p,c) => {
+export const TeacherCourseData = async (p, c) => {
   try {
     let res = await axios.get("/api/admin/getsettopic", {
       params: {
-         projectpractice_code:p,
-    code:c
+        projectpractice_code: p,
+        code: c,
       },
       headers: {
         Authorization: localStorage.getItem("vuems_token"),
@@ -293,7 +293,7 @@ export const SerachStudent = async (e) => {
   try {
     let res = await axios.get("/api/openuse/getsepstudents", {
       params: {
-        content:e,
+        content: e,
       },
       headers: {
         Authorization: localStorage.getItem("vuems_token"),
@@ -407,7 +407,7 @@ export const exportTeacherCourseData = async (e) => {
 //编辑教师出题
 //新建教师课题
 export const editTeacherCourse = async (e) => {
-  let ee ={
+  let ee = {
     projectPracticeCode: e.projectpracticeCode,
     projectPracticeName: e.projectpracticeName,
     title: e.title,
@@ -424,8 +424,8 @@ export const editTeacherCourse = async (e) => {
     teacher_name: e.teacherName,
     teacher_sno: e.teacherSno,
     reimburse: e.reimburse,
-  }
-  console.log(ee,'hhhff-----------');
+  };
+  console.log(ee, "hhhff-----------");
   try {
     let res = await axios.post(
       "/api/admin/updatesettopic",
@@ -879,7 +879,7 @@ export const exportStudentData = async () => {
 //获取模板
 export const getTemplate = async (e) => {
   try {
-    let res = await axios.get("/api/admin/getmodulefile", {
+    let res = await axios.get("/api/openuse/getmodulefile", {
       params: {
         type: e,
       },

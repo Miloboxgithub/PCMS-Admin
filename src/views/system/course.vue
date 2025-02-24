@@ -106,7 +106,10 @@ const query = reactive({
   //name: "",
 });
 const searchOpt = ref<FormOptionList[]>([
-  { type: "input", label: "实践课程编号查询：", prop: "projectpracticeCode" },
+  { type: "input", label: "实践课程编号：", prop: "projectpracticeCode" },
+  { type: "input", label: "专业：", prop: "majorName" },
+  { type: "input", label: "年级：", prop: "grade" },
+  { type: "input", label: "负责人：", prop: "adminName" },
 ]);
 
 // 表格相关
@@ -159,9 +162,9 @@ const getadmindata = async () => {
 };
 getadmindata();
 const handleSearch = async (queryData) => {
-  if (!queryData.projectpracticeCode) {
+  if (!queryData.projectpracticeCode&&!queryData.majorName&&!queryData.grade&&!queryData.adminName) {
     getData(1, 0);
-  } else {
+  } else if(queryData.projectpracticeCode){
     const ress = await SearchCourse(queryData.projectpracticeCode);
     if (ress == null) {
       ElMessage.error("查询失败");
@@ -170,6 +173,9 @@ const handleSearch = async (queryData) => {
       page.total = ress.total;
       componentKey.value++;
     }
+  }
+  else{
+
   }
 };
 async function daochu() {
@@ -250,13 +256,13 @@ let options = ref({
   list: [
     {
       type: "alert",
-
     },
     {
-      type: "input",
-      label: "实践课程名称",
-      prop: "projectpracticeName",
+      type: "select",
+      label: "年级",
+      prop: "grade",
       required: true,
+      options: recentYears,
     },
     {
       type: "select",
@@ -271,12 +277,12 @@ let options = ref({
       ],
     },
     {
-      type: "select",
-      label: "年级",
-      prop: "grade",
+      type: "selectname",
+      label: "实践课程名称",
+      prop: "projectpracticeName",
       required: true,
-      options: recentYears,
     },
+    
     {
       type: "select",
       label: "状态",
@@ -324,10 +330,11 @@ let newoptions = ref({
 
     },
     {
-      type: "input",
-      label: "实践课程名称",
-      prop: "projectpracticeName",
+      type: "select",
+      label: "年级",
+      prop: "grade",
       required: true,
+      options:recentYears,
     },
     {
       type: "select",
@@ -342,12 +349,12 @@ let newoptions = ref({
       ],
     },
     {
-      type: "select",
-      label: "年级",
-      prop: "grade",
+      type: "selectname",
+      label: "实践课程名称",
+      prop: "projectpracticeName",
       required: true,
-      options:recentYears,
     },
+    
     {
       type: "select",
       label: "状态",
