@@ -40,7 +40,31 @@
               <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
               导出
             </el-button>
-            
+            <el-select
+            v-model="gg"
+            placeholder="年级"
+            style="width: 200px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in grades"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+            <el-select
+            v-model="mm"
+            placeholder="专业"
+            style="width: 200px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in majors"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+          
         </template>
       </TableCustom>
     </div>
@@ -108,7 +132,7 @@
 </template>
 
 <script setup lang="ts" name="system-user">
-import { ref, reactive } from "vue";
+import { ref, reactive ,watch} from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
@@ -143,9 +167,9 @@ const query = reactive({
 });
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "查询：", prop: "sno" },
-  { type: "input", label: "年级：", prop: "grade" },
-  { type: "input", label: "班级：", prop: "class" },
-  { type: "input", label: "专业：", prop: "major_name" },
+  // { type: "select", label: "年级：", prop: "grade" },
+  // { type: "input", label: "班级：", prop: "class" },
+  // { type: "input", label: "专业：", prop: "major_name" },
 ]);
 
 // 初始化专业和年级的响应式变量
@@ -154,6 +178,7 @@ const ggg = ref('');
 
 // 专业数据
 const majors = ref([
+  {label: "全部", value: ""},
   { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
   { label: "电子科学与技术", value: "电子科学与技术" },
   { label: "自动化", value: "自动化" },
@@ -167,7 +192,7 @@ const mappings = {
 };
 // 生成最近四年的年级数据
 const currentYear = new Date().getFullYear();
-const grades = ref([]);
+const grades = ref([{label: "全部", value: ""}]);
 for (let i = 0; i < 4; i++) {
   const gradeYear = currentYear - i;
   grades.value.push({
@@ -237,16 +262,22 @@ const cc = ref("");
 const gg = ref("");
 const mm = ref("");
 const ss = ref("");
+watch(mm, (newValue, oldValue) => {
+  console.log(`选中的值从 ${oldValue} 变为 ${newValue}`);
+  // 在这里调用你需要的函数
+  getData(1, 0, "", gg.value, ss.value, mm.value);
+});
+watch(gg, (newValue, oldValue) => {
+  getData(1, 0, "", gg.value, ss.value, mm.value);
+})
 const handleSearch = async (queryData) => {
   cc.value = queryData.sno;
-  gg.value = queryData.grade;
-  mm.value = queryData.major_name;
-  ss.value = queryData.class;
+  
   //console.log(queryData.sno, "queryData");
-  if (!queryData.sno&&!queryData.grade&&!queryData.class&&!queryData.major_name) {
-    getData(1, 0, "", "", "", "");
+  if (!queryData.sno) {
+    getData(1, 0, "", gg.value, ss.value, mm.value);
   } else {
-    const ress = await fetchStudentData(1,0,queryData.sno, queryData.grade,queryData.class,queryData.major_name);
+    const ress = await fetchStudentData(1,0,queryData.sno, gg.value, ss.value, mm.value);
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {

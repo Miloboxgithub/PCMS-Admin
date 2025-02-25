@@ -35,6 +35,30 @@
             ></el-icon>
             导出
           </el-button>
+          <el-select
+            v-model="gg"
+            placeholder="年级"
+            style="width: 200px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in grades"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+            <el-select
+            v-model="mm"
+            placeholder="专业"
+            style="width: 200px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in majors"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </template>
       </TableCustom>
     </div>
@@ -72,7 +96,7 @@
 </template>
 
 <script setup lang="ts" name="system-user">
-import { ref, reactive } from "vue";
+import { ref, reactive,watch } from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
@@ -107,8 +131,8 @@ const query = reactive({
 });
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "实践课程编号：", prop: "projectpracticeCode" },
-  { type: "input", label: "专业：", prop: "majorName" },
-  { type: "input", label: "年级：", prop: "grade" },
+  // { type: "input", label: "专业：", prop: "majorName" },
+  // { type: "input", label: "年级：", prop: "grade" },
   { type: "input", label: "负责人：", prop: "adminName" },
 ]);
 
@@ -165,16 +189,12 @@ const mm = ref("");
 const gg = ref("");
 const aa = ref("");
 const handleSearch = async (queryData) => {
-  mm.value = queryData.majorName;
-  gg.value = queryData.grade;
+  
   aa.value = queryData.adminName;
   if (
-    !queryData.projectpracticeCode &&
-    !queryData.majorName &&
-    !queryData.grade &&
-    !queryData.adminName
+    !queryData.projectpracticeCode &&!queryData.adminName
   ) {
-    getData(1, 0, "", "", "");
+    getData(1, 0, mm.value, gg.value, aa.value);
   } else if (queryData.projectpracticeCode) {
     const ress = await SearchCourse(queryData.projectpracticeCode);
     if (ress == null) {
@@ -185,9 +205,39 @@ const handleSearch = async (queryData) => {
       componentKey.value++;
     }
   } else {
-    getData(1, 0, queryData.majorName, queryData.grade, queryData.adminName);
+    getData(1, 0, mm.value, gg.value, aa.value);
   }
 };
+// 专业数据
+const majors = ref([
+  {label: "全部", value: ""},
+  { label: "机械设计制造及其自动化", value: "机械设计制造及其自动化" },
+  { label: "电子科学与技术", value: "电子科学与技术" },
+  { label: "自动化", value: "自动化" },
+  { label: "机器人工程", value: "机器人工程" },
+]);
+const mappings = {
+  "机械设计制造及其自动化": "0101",
+  "电子科学与技术": "0102",
+  "机器人工程": "0104",
+  "自动化": "0103",
+};
+// 生成最近四年的年级数据
+const currentYear = new Date().getFullYear();
+const grades = ref([{label: "全部", value: ""}]);
+for (let i = 0; i < 4; i++) {
+  const gradeYear = currentYear - i;
+  grades.value.push({
+    label: `${gradeYear}`,
+    value: `${gradeYear}`,
+  });
+}
+watch(mm, (newValue, oldValue) => {
+  getData(1, 0, mm.value, gg.value, aa.value);
+});
+watch(gg, (newValue, oldValue) => {
+  getData(1, 0, mm.value, gg.value, aa.value);
+})
 async function daochu() {
   ElMessageBox.confirm("确定要导出表格吗？", "提示", {
     type: "info",

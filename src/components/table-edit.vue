@@ -243,7 +243,7 @@
               <Plus />
             </el-icon>
           </el-upload>
-          <slot :name="item.prop" v-else> </slot>
+          <!-- <slot :name="item.prop" v-else> </slot> -->
         </el-form-item>
       </el-col>
     </el-row>
@@ -488,6 +488,81 @@ options.list.forEach((item) => {
 const form = ref({ ...(edit ? formData : {}) });
 console.log(form.value, "form");
 console.log(options.list, "options.list");
+if(edit){
+  ggg.value = form.value.grade
+  mam.value = form.value.majorName
+  if(ggg.value&&mam.value){
+    options.list.forEach((item) => {
+      if(item.prop=='projectpracticeName'){
+        item.options = []
+        if(mam.value=='电子科学与技术'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'工程项目实践1',
+              value: ggg.value+mam.value+'工程项目实践1',
+            },
+            {
+              label: ggg.value+mam.value+'工程项目实践2',
+              value: ggg.value+mam.value+'工程项目实践2',
+            },
+            {
+              label: ggg.value+mam.value+'工程项目实践3',
+              value: ggg.value+mam.value+'工程项目实践3',
+            }
+          ]
+        }
+        if(mam.value=='机械设计制造及其自动化'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'基础实践',
+              value: ggg.value+mam.value+'基础实践',
+            },
+            {
+              label: ggg.value+mam.value+'中级实践',
+              value: ggg.value+mam.value+'中级实践',
+            },
+            {
+              label: ggg.value+mam.value+'高级实践',
+              value: ggg.value+mam.value+'高级实践',
+            }
+          ]
+        }
+        if(mam.value=='自动化'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'项目工作1',
+              value: ggg.value+mam.value+'项目工作1',
+            },
+            {
+              label: ggg.value+mam.value+'项目工作2',
+              value: ggg.value+mam.value+'项目工作2',
+            },
+            {
+              label: ggg.value+mam.value+'项目工作3',
+              value: ggg.value+mam.value+'项目工作3',
+            }
+          ]
+        }
+        if(mam.value=='机器人工程'){
+          item.options =[
+            {
+              label: ggg.value+mam.value+'基础实践1',
+              value: ggg.value+mam.value+'基础实践1',
+            },
+            {
+              label: ggg.value+mam.value+'基础实践2',
+              value: ggg.value+mam.value+'基础实践2',
+            },
+            {
+              label: ggg.value+mam.value+'基础实践3',
+              value: ggg.value+mam.value+'基础实践3',
+            }
+          ]
+        }
+      }
+    })
+  }
+}
 form.value.password = "";
 const getData = async (e, p) => {
   const res = await TeacherCourseData(e, p);
@@ -574,14 +649,18 @@ const searchStudent = async (e) => {
   }
   else{
     searchData.value = [];
+    let op = res.data.Studentinfo.StudentLists;
+    op.forEach((item) => {
       searchData.value.push({
-        name: res.data.Studentinfo.name,
-        sno: res.data.Studentinfo.sno,
-        class: res.data.Studentinfo.class,
-        phone: res.data.Studentinfo.phone,
-        major: res.data.Studentinfo.majorName,
-        grade: res.data.Studentinfo.grade,
+        name: item.name,
+        sno: item.sno,
+        class: item.class,
+        phone: item.phone,
+        major: item.majorName,
+        grade: item.grade,
       })
+    })
+     
     
   }
 };

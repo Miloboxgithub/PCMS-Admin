@@ -387,8 +387,12 @@ export const exportTeacherCourseData = async (e) => {
   try {
     let res = await axios.get("/api/admin/getexportsettopic", {
       params: {
+        GuidancePlace:'',
+        ReleaseStatus:'-1',
+        Reimburse:'-1',
+        TeacherSno:'',
         TeacherName: "",
-        ProjectpracticeName: "",
+        StudentRequirements:'-1',
         ProjectpracticeCode: e,
         TitleName: "",
         Type: "000000",
