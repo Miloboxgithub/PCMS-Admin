@@ -45,7 +45,7 @@
       :data="tableData"
       :row-key="rowKey"
       @selection-change="handleSelectionChange"
-      @sort-change="customSortMethod"
+      
       table-layout="auto"
     >
       <template v-for="item in columns" :key="item.prop" >
@@ -58,6 +58,7 @@
           :type="item.type"
           :align="item.align || 'center'"
           :sortable="item.sortable"
+          @sort-change="customSortMethod(item.prop)"
           :fixed="item.fixed||false"
         >
           <template
@@ -277,18 +278,18 @@ columns.value.forEach((item) => {
   }
 });
 let isAscending=true
- let sortState = localStorage.getItem("sortState");
-const customSortMethod=()=> {
+ let sortState = ref(0);
+const customSortMethod=(e)=> {
   
-  console.log(sortState,"sortState");
+  console.log(sortState,"sortState",e);
   
           if(sortState){
             props.changePage(currentPage.value,'', null);
-            localStorage.removeItem("sortState");
+            //localStorage.removeItem("sortState");
           }
           else{
             props.changePage(currentPage.value, '','1');
-            localStorage.setItem("sortState", "1");
+            //localStorage.setItem("sortState", "1");
           }
 
     }

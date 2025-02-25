@@ -30,14 +30,16 @@ export const fetchAdminData = async () => {
 //   }
 // };
 //分页获取实践课程
-export const fetchCourseData = async (e, p) => {
-  //console.log("fetchCourseData", e, p);
+export const fetchCourseData = async (e, p,m,g,a) => {
+  console.log("fetchCourseData", e, p, m, g, a);
   try {
     let res = await axios.get("/api/admin/getprojectpracticebypage", {
       params: {
         page: e,
         size: 20,
-        Content: "",
+        MajorName:m,
+        Grade:g,
+        AdminName:a,
         Type: "",
         reverse: p,
       },
@@ -381,6 +383,7 @@ export const DeleteTeacherCourseData = async (e) => {
 };
 //导出教师出题
 export const exportTeacherCourseData = async (e) => {
+  //console.log(e, "导出教师出题");
   try {
     let res = await axios.get("/api/admin/getexportsettopic", {
       params: {
@@ -734,7 +737,7 @@ export const exportTeacherData = async () => {
   }
 };
 //分页获取学生信息
-export const fetchStudentData = async (e, p, c) => {
+export const fetchStudentData = async (e, p, c, g, s, m) => {
   try {
     let res = await axios.post(
       "/api/superadmin/getstudentbypage",
@@ -742,6 +745,9 @@ export const fetchStudentData = async (e, p, c) => {
         Page: e,
         Size: 20,
         Content: c,
+        MajorName:m,
+        Grade: g,
+        Class:s,
         Type: "000000",
         Reserve: "0",
       },

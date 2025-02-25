@@ -117,16 +117,16 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
-  
-  { prop: "projectpracticeCode", label: "实践课程编号" ,width:200},
-  { prop: "projectpracticeName", label: "实践课程名称",width:250 },
-  { prop: "majorName", label: "专业" ,width:200},
-  { prop: "grade", label: "年级", width:85},
-  { prop: "adminName", label: "负责人" ,width:100},
-  { prop: "titleTime", label: "教师出题时间" ,width:200},
-  { prop: "selectTime", label: "学生选课时间" ,width:200},
-  { prop: "status", label: "状态" ,width:100},
-  { prop: "operatorno", label: "操作", width: 250 ,fixed: "right"},
+
+  { prop: "projectpracticeCode", label: "实践课程编号", width: 200 },
+  { prop: "projectpracticeName", label: "实践课程名称", width: 250 },
+  { prop: "majorName", label: "专业", width: 200 ,sortable :true},
+  { prop: "grade", label: "年级", width: 85 ,sortable :true},
+  { prop: "adminName", label: "负责人", width: 100,sortable :true },
+  { prop: "titleTime", label: "教师出题时间", width: 200 },
+  { prop: "selectTime", label: "学生选课时间", width: 200 },
+  { prop: "status", label: "状态", width: 100 },
+  { prop: "operatorno", label: "操作", width: 250, fixed: "right" },
 ]);
 const page = reactive({
   index: 1,
@@ -135,8 +135,8 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e, p) => {
-  const ress = await fetchCourseData(e, p);
+const getData = async (e, p, m, g, a) => {
+  const ress = await fetchCourseData(e, p, m, g, a);
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -146,7 +146,7 @@ const getData = async (e, p) => {
   componentKey.value++;
   console.log(ress, tableData.value, "tableData");
 };
-getData(1, 0);
+getData(1, 0, "", "", "");
 const getadmindata = async () => {
   const ress = await fetchAdminData();
   if (ress.code != 50) {
@@ -161,10 +161,21 @@ const getadmindata = async () => {
   }
 };
 getadmindata();
+const mm = ref("");
+const gg = ref("");
+const aa = ref("");
 const handleSearch = async (queryData) => {
-  if (!queryData.projectpracticeCode&&!queryData.majorName&&!queryData.grade&&!queryData.adminName) {
-    getData(1, 0);
-  } else if(queryData.projectpracticeCode){
+  mm.value = queryData.majorName;
+  gg.value = queryData.grade;
+  aa.value = queryData.adminName;
+  if (
+    !queryData.projectpracticeCode &&
+    !queryData.majorName &&
+    !queryData.grade &&
+    !queryData.adminName
+  ) {
+    getData(1, 0, "", "", "");
+  } else if (queryData.projectpracticeCode) {
     const ress = await SearchCourse(queryData.projectpracticeCode);
     if (ress == null) {
       ElMessage.error("查询失败");
@@ -173,9 +184,8 @@ const handleSearch = async (queryData) => {
       page.total = ress.total;
       componentKey.value++;
     }
-  }
-  else{
-
+  } else {
+    getData(1, 0, queryData.majorName, queryData.grade, queryData.adminName);
   }
 };
 async function daochu() {
@@ -190,15 +200,18 @@ async function daochu() {
           message: "导出失败",
         });
       else {
-        const url = window.URL.createObjectURL(new Blob([res],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-        const link = document.createElement('a');
+        const url = window.URL.createObjectURL(
+          new Blob([res], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          })
+        );
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
-        link.style.display = 'none' // 隐藏元素
+        link.setAttribute("download", "data.xlsx"); // 设置下载的文件名
+        link.style.display = "none"; // 隐藏元素
         document.body.appendChild(link);
         link.click();
-        
+
         // 清理 DOM 和释放 URL 对象
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
@@ -212,7 +225,7 @@ async function daochu() {
 }
 const changePage = (val: number, name: string, p) => {
   page.index = val;
-  getData(page.index, p);
+  getData(page.index, p, mm.value, gg.value, aa.value);
 };
 function formatDate(dateString) {
   // 创建 Date 对象
@@ -242,7 +255,7 @@ function getRecentYears(numYears) {
   for (let i = 0; i < numYears; i++) {
     years.push({
       label: currentYear - i,
-      value: currentYear - i
+      value: currentYear - i,
     });
   }
   return years;
@@ -282,7 +295,7 @@ let options = ref({
       prop: "projectpracticeName",
       required: true,
     },
-    
+
     {
       type: "select",
       label: "状态",
@@ -325,16 +338,15 @@ let newoptions = ref({
   labelWidth: "140px",
   span: 22,
   list: [
-  {
+    {
       type: "alert",
-
     },
     {
       type: "select",
       label: "年级",
       prop: "grade",
       required: true,
-      options:recentYears,
+      options: recentYears,
     },
     {
       type: "select",
@@ -354,7 +366,7 @@ let newoptions = ref({
       prop: "projectpracticeName",
       required: true,
     },
-    
+
     {
       type: "select",
       label: "状态",
@@ -402,7 +414,7 @@ const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
-  getData(1, 0);
+  getData(1, 0, mm.value, gg.value, aa.value);
 };
 const mapping = {
   机械设计制造及其自动化: "0101",
@@ -432,7 +444,7 @@ const updateData = async (e) => {
   }
   closeDialog();
   setTimeout(() => {
-    getData(1, 0);
+    getData(1, 0, "", "", "");
   }, 500);
 };
 
@@ -500,7 +512,7 @@ const handleDelSelection = (e) => {
   DeleteCourseData(delt)
     .then((res) => {
       ElMessage.success("删除成功");
-      getData(1, 0);
+      getData(1, 0, mm.value, gg.value, aa.value);
       page.index = 1;
     })
     .catch((err) => {
@@ -516,7 +528,7 @@ const handleDelete = async (row) => {
   } else {
     ElMessage.error("删除失败");
   }
-  getData(1, 0);
+  getData(1, 0, mm.value, gg.value, aa.value);
   page.index = 1;
 };
 </script>

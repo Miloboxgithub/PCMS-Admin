@@ -143,6 +143,9 @@ const query = reactive({
 });
 const searchOpt = ref<FormOptionList[]>([
   { type: "input", label: "查询：", prop: "sno" },
+  { type: "input", label: "年级：", prop: "grade" },
+  { type: "input", label: "班级：", prop: "class" },
+  { type: "input", label: "专业：", prop: "major_name" },
 ]);
 
 // 初始化专业和年级的响应式变量
@@ -205,8 +208,9 @@ let columns = ref([
   { prop: "name", label: "姓名" },
   { prop: "sno", label: "学号" },
   { prop: "phone", label: "电话" },
-  { prop: "class", label: "班级" },
-  { prop: "major_name", label: "专业" },
+  { prop: "grade", label: "年级",sortable: true },
+  { prop: "class", label: "班级" ,sortable: true },
+  { prop: "major_name", label: "专业",sortable: true  },
   { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
@@ -216,8 +220,9 @@ const page = reactive({
 });
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
-const getData = async (e, p) => {
-  const ress = await fetchStudentData(e, p,'');
+
+const getData = async (e, p,c,g,s,m) => {
+  const ress = await fetchStudentData(e, p, c,g,s,m);
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -227,13 +232,21 @@ const getData = async (e, p) => {
   componentKey.value++;
   console.log(ress, tableData.value, "tableData");
 };
-getData(1, 0);
+getData(1, 0, "", "", "", "");
+const cc = ref("");
+const gg = ref("");
+const mm = ref("");
+const ss = ref("");
 const handleSearch = async (queryData) => {
-  console.log(queryData.sno, "queryData");
-  if (!queryData.sno) {
-    getData(1, 0);
+  cc.value = queryData.sno;
+  gg.value = queryData.grade;
+  mm.value = queryData.major_name;
+  ss.value = queryData.class;
+  //console.log(queryData.sno, "queryData");
+  if (!queryData.sno&&!queryData.grade&&!queryData.class&&!queryData.major_name) {
+    getData(1, 0, "", "", "", "");
   } else {
-    const ress = await fetchStudentData(1,0,queryData.sno);
+    const ress = await fetchStudentData(1,0,queryData.sno, queryData.grade,queryData.class,queryData.major_name);
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
@@ -308,7 +321,7 @@ const daoru = async (a, b, c) => {
         console.log("File uploaded successfully:", response);
         ElMessage.success("文件导入成功");
         setTimeout(() => {
-          getData(1, 0);
+          getData(1, 0,cc.value, gg.value, ss.value, mm.value);
         }, 500);
         // 检查是否有错误信息表格返回
       if (response.data.size!=52) {
@@ -389,7 +402,7 @@ async function moban() {
 }
 const changePage = (val: number, name: string, p) => {
   page.index = val;
-  getData(page.index, p);
+  getData(page.index, p, cc.value, gg.value, ss.value, mm.value);
 };
 function formatDate(dateString) {
   // 创建 Date 对象
@@ -535,7 +548,7 @@ const handleEdit = (row: User) => {
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
-  getData(1, 0);
+  getData(1, 0,cc.value,gg.value,ss.value,mm.value);
 };
 const mapping = {
   "机械设计制造及其自动化": "0101",
@@ -566,7 +579,7 @@ const updateData = async (e) => {
   }
   closeDialog();
   setTimeout(() => {
-    getData(1, 0);
+    getData(1, 0,cc.value,gg.value,ss.value,mm.value);
   }, 500);
 };
 
@@ -618,7 +631,7 @@ const handleDelSelection = (e) => {
   DeleteStudentData(delt)
     .then((res) => {
       ElMessage.success("删除成功");
-      getData(1, 0);
+      getData(1, 0,cc.value,gg.value,ss.value,mm.value);
       page.index = 1;
     })
     .catch((err) => {
@@ -635,7 +648,7 @@ const handleDelete = async (row) => {
   } else {
     ElMessage.error("删除失败");
   }
-  getData(1, 0);
+  getData(1, 0,cc.value,gg.value,ss.value,mm.value);
   page.index = 1;
 };
 </script>
