@@ -414,25 +414,8 @@ export const exportTeacherCourseData = async (e) => {
 //编辑教师出题
 //新建教师课题
 export const editTeacherCourse = async (e) => {
-  let ee = {
-    projectPracticeCode: e.projectpracticeCode,
-    projectPracticeName: e.projectpracticeName,
-    title: e.title,
-    content: e.content,
-    code: e.code,
-    guidance_place: e.guidancePlace,
-    guidance_time: e.guidanceTime,
-    budget: e.budget,
-    studentRequirements: e.studentRequirements,
-    releaseStatus: e.releaseStatus,
-    resultDisplay: e.resultDisplay,
-    appointStudent: e.appointStudent.map((item) => item.sno),
-    deleteStudent: e.deleteStudent.map((item) => item.sno),
-    teacher_name: e.teacherName,
-    teacher_sno: e.teacherSno,
-    reimburse: e.reimburse,
-  };
-  console.log(ee, "hhhff-----------");
+ 
+  //console.log(ee, "hhhff-----------");
   try {
     let res = await axios.post(
       "/api/admin/updatesettopic",

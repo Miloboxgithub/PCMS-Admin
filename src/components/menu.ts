@@ -4,7 +4,7 @@ export const menuData: Menus[] = [
   {
     id: "0",
     title: "首页",
-    index: "/404",
+    index: "/system-index",
     icon: "HomeFilled",
   },
   {
