@@ -6,62 +6,70 @@ export const menuData: Menus[] = [
     title: "首页",
     index: "/404",
     icon: "HomeFilled",
+    permission: "all",
   },
   {
     id: "0",
     icon: "WalletFilled",
     index: "/system-course",
     title: "实践课程管理",
+    permission: "all",
   },
   {
     id: "0",
     icon: "Management",
     index: "/system-teacher",
     title: "教师课题管理",
+    permission: "all",
   },
   {
     id: "1",
     icon: "Checked",
     index: "/system-student",
     title: "学生选课管理",
-  },
-  {
-    id: "1",
-    icon: "Avatar",
-    index: "/system-tmessage",
-    title: "教师信息管理",
+    permission: "all",
   },
   {
     id: "1",
     icon: "UserFilled",
     index: "/system-smessage",
     title: "学生信息管理",
+    permission: "all",
   },
-    {
-      id: "1",
+  {
+    id: "1",
+    icon: "Avatar",
+    index: "/system-tmessage",
+    title: "教师信息管理",
+    permission: "superadmin",
+  },
+
+  {
+    id: "1",
     icon: "Tools",
     index: "/system-management",
     title: "系统管理",
-      children: [
-  {
-      id: '32',
-      pid: '2',
-      index: '/system-management',
-      title: '项目实践管理员',
-  },
-  {
-    id: "13",
-    icon: "Tools",
-    index: "/pages-reset-pwd",
-    title: "修改密码",
-  },
-  {
-    id: "13",
-    icon: "Tools",
-    index: "/system-journal",
-    title: "发现日志",
-  },
-      ],
+    permission: "superadmin",
+    children: [
+      {
+        id: "32",
+        pid: "2",
+        index: "/system-management",
+        title: "项目实践管理员",
+      },
+      {
+        id: "13",
+        icon: "Tools",
+        index: "/pages-reset-pwd",
+        title: "修改密码",
+      },
+      {
+        id: "13",
+        icon: "Tools",
+        index: "/system-journal",
+        title: "发现日志",
+      },
+    ],
   },
   // {
   //     id: '3',

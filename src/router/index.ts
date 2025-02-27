@@ -453,7 +453,6 @@ router.beforeEach((to, from, next) => {
     // 检查是否是需要superadmin权限的页面
     const isSuperadminPage =
       to.meta.permiss === "19" ||
-      to.meta.permiss === "20" ||
       to.meta.permiss === "21";
     if (isSuperadminPage) {
       // 如果是需要superadmin权限的页面，检查角色是否为superadmin

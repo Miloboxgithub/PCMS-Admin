@@ -340,7 +340,7 @@ const daoru = async (a, b, c) => {
       formData.append('majorcode', b);
       formData.append('grade',c);
 
-      const response = await axios.post('/api/superadmin/createbatchstudent', formData, {
+      const response = await axios.post('/api/admin/createbatchstudent', formData, {
         headers: {
           Authorization: localStorage.getItem("vuems_token"),
         },

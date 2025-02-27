@@ -729,7 +729,7 @@ export const exportTeacherData = async () => {
 export const fetchStudentData = async (e, p, c, g, s, m) => {
   try {
     let res = await axios.post(
-      "/api/superadmin/getstudentbypage",
+      "/api/admin/getstudentbypage",
       {
         Page: e,
         Size: 20,
@@ -762,7 +762,7 @@ export const fetchStudentData = async (e, p, c, g, s, m) => {
 export const createStudent = async (e) => {
   try {
     let res = await axios.post(
-      "/api/superadmin/createstudent",
+      "/api/admin/createstudent",
       {
         name: e.name,
         sno: e.sno,
@@ -790,7 +790,7 @@ export const createStudent = async (e) => {
 export const updateStudent = async (e) => {
   try {
     let res = await axios.post(
-      "/api/superadmin/updatestudent",
+      "/api/admin/updatestudent",
       {
         name: e.name,
         sno: e.sno,
@@ -823,7 +823,7 @@ export const DeleteStudentData = async (e) => {
       // ...其他需要的数据字段
     };
     // 发起 POST 请求
-    const response = await fetch("/api/superadmin/deletebatchstudent", {
+    const response = await fetch("/api/admin/deletebatchstudent", {
       method: "DELETE", // 指定请求方法为 POST
       headers: {
         "Content-Type": "application/json", // 设置请求头，告诉服务器发送的是 JSON 数据
@@ -853,7 +853,7 @@ export const DeleteStudentData = async (e) => {
 //导出学生信息
 export const exportStudentData = async () => {
   try {
-    let res = await axios.get("/api/superadmin/getexportstudent", {
+    let res = await axios.get("/api/admin/getexportstudent", {
       params: {
         Content: "",
         Type: "00000000",

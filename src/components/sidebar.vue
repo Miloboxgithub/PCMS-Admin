@@ -9,7 +9,7 @@
       active-text-color="#2272FB"
       router
     >
-      <template v-for="item in menuData">
+      <template v-for="item in menuData" >
         <template v-if="item.children">
           <el-sub-menu
             :index="item.index"
@@ -73,6 +73,7 @@ const onRoutes = computed(() => {
 });
 
 const sidebar = useSidebarStore();
+
 </script>
 
 <style scoped>
