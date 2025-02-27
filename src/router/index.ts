@@ -24,18 +24,18 @@ const routes: RouteRecordRaw[] = [
         component: () =>
           import(/* webpackChunkName: "dashboard" */ "../views/dashboard.vue"),
       },
-      {
-        path: "/system-index",
-        name: "index",
-        meta: {
-          title: "首页",
-          noAuth: true,
-        },
-        component: () =>
-          import(
-            /* webpackChunkName: "dashboard" */ "../views/system/index.vue"
-          ),
-      },
+      // {
+      //   path: "/system-index",
+      //   name: "index",
+      //   meta: {
+      //     title: "首页",
+      //     noAuth: true,
+      //   },
+      //   component: () =>
+      //     import(
+      //       /* webpackChunkName: "dashboard" */ "../views/system/index.vue"
+      //     ),
+      // },
       // {
       //     path: '/system-user',
       //     name: 'system-user',

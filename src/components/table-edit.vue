@@ -5,7 +5,6 @@
     :rules="rules"
     :label-width="options.labelWidth"
   >
-
     <el-row>
       <el-col :span="options.span" v-for="item in options.list">
         <el-form-item :label="item.label" :prop="item.prop">
@@ -20,40 +19,45 @@
             />
           </div>
           <div v-if="item.type === 'sss'" style="width: 100%; height: 100%">
-            <div style="border: 1px solid #ccc;
-                border-radius: 5px;
-                padding: 10px; width: 100%;">
             <div
               style="
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                padding: 10px;
                 width: 100%;
-                height: auto;
-                margin-bottom: 10px;
-                display: flex;
-                align-items: center;
               "
             >
-              <div style="color: #2272fb; font-size: 12px;">
-                指定学生（{{
-                  stableData.filter((item) => item.isappointment == 1).length
-                }}人）
+              <div
+                style="
+                  width: 100%;
+                  height: auto;
+                  margin-bottom: 10px;
+                  display: flex;
+                  align-items: center;
+                "
+              >
+                <div style="color: #2272fb; font-size: 12px">
+                  指定学生（{{
+                    stableData.filter((item) => item.isappointment == 1).length
+                  }}人）
+                </div>
+                <div style="color: #3b3f47; font-size: 12px">
+                  未指定（{{
+                    stableData.filter((item) => item.isappointment == 0).length
+                  }}人）
+                </div>
+                <el-input
+                  v-model="inputname"
+                  style="width: 240px; margin-left: 10px; margin-right: 10px"
+                  placeholder="学生姓名/学号查询"
+                />
+                <el-button
+                  @click="searchStudent(inputname,projectpracticeCodes)"
+                  :icon="Search"
+                  circle
+                />
               </div>
-              <div style="color: #3b3f47; font-size: 12px">
-                未指定（{{
-                  stableData.filter((item) => item.isappointment == 0).length
-                }}人）
-              </div>
-              <el-input
-                v-model="inputname"
-                style="width: 240px; margin-left: 10px; margin-right: 10px"
-                placeholder="学生姓名/学号查询"
-              />
-              <el-button
-                @click="searchStudent(inputname)"
-                :icon="Search"
-                circle
-              />
-            </div>
-            <div class="window-content">
+              <div class="window-content">
                 <el-table :data="searchData" class="custom-table-font-size">
                   <el-table-column prop="name" label="姓名" width="60" />
                   <el-table-column prop="sno" label="学号" width="100" />
@@ -70,12 +74,11 @@
                       >
                         添加
                       </el-button>
-                      
                     </template>
                   </el-table-column>
                 </el-table>
               </div>
-          </div>
+            </div>
             <div class="scrollable-window">
               <div class="window-content">
                 <el-table :data="stableData" class="custom-table-font-size">
@@ -87,8 +90,16 @@
                       <el-tag v-if="scope.row.isappointment == 1"
                         >被指定</el-tag
                       >
-                      <el-tag v-else-if="scope.row.isappointment == 0" type="info">未指定</el-tag>
-                      <el-tag v-else-if="scope.row.isappointment == 2" type="warning">待指定</el-tag>
+                      <el-tag
+                        v-else-if="scope.row.isappointment == 0"
+                        type="info"
+                        >未指定</el-tag
+                      >
+                      <el-tag
+                        v-else-if="scope.row.isappointment == 2"
+                        type="warning"
+                        >待指定</el-tag
+                      >
                     </template>
                   </el-table-column>
                   <el-table-column prop="class" label="班级" width="50" />
@@ -256,7 +267,7 @@
 
 <script lang="ts" setup>
 import { FormOption } from "@/types/form-option";
-import { FormInstance, FormRules, UploadProps,ElMessage } from "element-plus";
+import { FormInstance, FormRules, UploadProps, ElMessage } from "element-plus";
 import { PropType, ref } from "vue";
 import { ElMessageBox } from "element-plus";
 import {
@@ -274,93 +285,93 @@ const stableData = ref([]);
 const searchData = ref([]);
 const delstableData = ref([]);
 const deleteRow = (index: number) => {
-  if(stableData.value[index].isappointment!=2){
+  if (stableData.value[index].isappointment != 2) {
     delstableData.value.push(stableData.value[index]);
   }
   stableData.value.splice(index, 1);
 };
-const ggg = ref('')
-const mam = ref('')
+const ggg = ref("");
+const mam = ref("");
 const handleChange = (event, a, b) => {
   console.log("事件对象：", event);
   console.log("第一个自定义值：", a);
   console.log("第二个自定义值：", b);
-  if(a=='grade'){
-    ggg.value = b
+  if (a == "grade") {
+    ggg.value = b;
   }
-  if(a=='majorName'){
-    mam.value = b
+  if (a == "majorName") {
+    mam.value = b;
   }
-  if(ggg.value&&mam.value){
+  if (ggg.value && mam.value) {
     options.list.forEach((item) => {
-      if(item.prop=='projectpracticeName'){
-        item.options = []
-        if(mam.value=='电子科学与技术'){
-          item.options =[
+      if (item.prop == "projectpracticeName") {
+        item.options = [];
+        if (mam.value == "电子科学与技术") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'工程项目实践1',
-              value: ggg.value+mam.value+'工程项目实践1',
+              label: ggg.value + mam.value + "工程项目实践1",
+              value: ggg.value + mam.value + "工程项目实践1",
             },
             {
-              label: ggg.value+mam.value+'工程项目实践2',
-              value: ggg.value+mam.value+'工程项目实践2',
+              label: ggg.value + mam.value + "工程项目实践2",
+              value: ggg.value + mam.value + "工程项目实践2",
             },
             {
-              label: ggg.value+mam.value+'工程项目实践3',
-              value: ggg.value+mam.value+'工程项目实践3',
-            }
-          ]
+              label: ggg.value + mam.value + "工程项目实践3",
+              value: ggg.value + mam.value + "工程项目实践3",
+            },
+          ];
         }
-        if(mam.value=='机械设计制造及其自动化'){
-          item.options =[
+        if (mam.value == "机械设计制造及其自动化") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'基础实践',
-              value: ggg.value+mam.value+'基础实践',
+              label: ggg.value + mam.value + "基础实践",
+              value: ggg.value + mam.value + "基础实践",
             },
             {
-              label: ggg.value+mam.value+'中级实践',
-              value: ggg.value+mam.value+'中级实践',
+              label: ggg.value + mam.value + "中级实践",
+              value: ggg.value + mam.value + "中级实践",
             },
             {
-              label: ggg.value+mam.value+'高级实践',
-              value: ggg.value+mam.value+'高级实践',
-            }
-          ]
+              label: ggg.value + mam.value + "高级实践",
+              value: ggg.value + mam.value + "高级实践",
+            },
+          ];
         }
-        if(mam.value=='自动化'){
-          item.options =[
+        if (mam.value == "自动化") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'项目工作1',
-              value: ggg.value+mam.value+'项目工作1',
+              label: ggg.value + mam.value + "项目工作1",
+              value: ggg.value + mam.value + "项目工作1",
             },
             {
-              label: ggg.value+mam.value+'项目工作2',
-              value: ggg.value+mam.value+'项目工作2',
+              label: ggg.value + mam.value + "项目工作2",
+              value: ggg.value + mam.value + "项目工作2",
             },
             {
-              label: ggg.value+mam.value+'项目工作3',
-              value: ggg.value+mam.value+'项目工作3',
-            }
-          ]
+              label: ggg.value + mam.value + "项目工作3",
+              value: ggg.value + mam.value + "项目工作3",
+            },
+          ];
         }
-        if(mam.value=='机器人工程'){
-          item.options =[
+        if (mam.value == "机器人工程") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'基础实践1',
-              value: ggg.value+mam.value+'基础实践1',
+              label: ggg.value + mam.value + "基础实践1",
+              value: ggg.value + mam.value + "基础实践1",
             },
             {
-              label: ggg.value+mam.value+'基础实践2',
-              value: ggg.value+mam.value+'基础实践2',
+              label: ggg.value + mam.value + "基础实践2",
+              value: ggg.value + mam.value + "基础实践2",
             },
             {
-              label: ggg.value+mam.value+'基础实践3',
-              value: ggg.value+mam.value+'基础实践3',
-            }
-          ]
+              label: ggg.value + mam.value + "基础实践3",
+              value: ggg.value + mam.value + "基础实践3",
+            },
+          ];
         }
       }
-    })
+    });
   }
 };
 const { options, formData, edit, update, edits } = defineProps({
@@ -487,87 +498,90 @@ options.list.forEach((item) => {
 });
 const form = ref({ ...(edit ? formData : {}) });
 console.log(form.value, "form");
+const projectpracticeCodes = ref(form.value.projectpracticeCode);
 console.log(options.list, "options.list");
-if(edit){
-  ggg.value = form.value.grade
-  mam.value = form.value.majorName
-  if(ggg.value&&mam.value){
+if (edit) {
+  ggg.value = form.value.grade;
+  mam.value = form.value.majorName;
+  if (ggg.value && mam.value) {
     options.list.forEach((item) => {
-      if(item.prop=='projectpracticeName'){
-        item.options = []
-        if(mam.value=='电子科学与技术'){
-          item.options =[
+      if (item.prop == "projectpracticeName") {
+        item.options = [];
+        if (mam.value == "电子科学与技术") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'工程项目实践1',
-              value: ggg.value+mam.value+'工程项目实践1',
+              label: ggg.value + mam.value + "工程项目实践1",
+              value: ggg.value + mam.value + "工程项目实践1",
             },
             {
-              label: ggg.value+mam.value+'工程项目实践2',
-              value: ggg.value+mam.value+'工程项目实践2',
+              label: ggg.value + mam.value + "工程项目实践2",
+              value: ggg.value + mam.value + "工程项目实践2",
             },
             {
-              label: ggg.value+mam.value+'工程项目实践3',
-              value: ggg.value+mam.value+'工程项目实践3',
-            }
-          ]
+              label: ggg.value + mam.value + "工程项目实践3",
+              value: ggg.value + mam.value + "工程项目实践3",
+            },
+          ];
         }
-        if(mam.value=='机械设计制造及其自动化'){
-          item.options =[
+        if (mam.value == "机械设计制造及其自动化") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'基础实践',
-              value: ggg.value+mam.value+'基础实践',
+              label: ggg.value + mam.value + "基础实践",
+              value: ggg.value + mam.value + "基础实践",
             },
             {
-              label: ggg.value+mam.value+'中级实践',
-              value: ggg.value+mam.value+'中级实践',
+              label: ggg.value + mam.value + "中级实践",
+              value: ggg.value + mam.value + "中级实践",
             },
             {
-              label: ggg.value+mam.value+'高级实践',
-              value: ggg.value+mam.value+'高级实践',
-            }
-          ]
+              label: ggg.value + mam.value + "高级实践",
+              value: ggg.value + mam.value + "高级实践",
+            },
+          ];
         }
-        if(mam.value=='自动化'){
-          item.options =[
+        if (mam.value == "自动化") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'项目工作1',
-              value: ggg.value+mam.value+'项目工作1',
+              label: ggg.value + mam.value + "项目工作1",
+              value: ggg.value + mam.value + "项目工作1",
             },
             {
-              label: ggg.value+mam.value+'项目工作2',
-              value: ggg.value+mam.value+'项目工作2',
+              label: ggg.value + mam.value + "项目工作2",
+              value: ggg.value + mam.value + "项目工作2",
             },
             {
-              label: ggg.value+mam.value+'项目工作3',
-              value: ggg.value+mam.value+'项目工作3',
-            }
-          ]
+              label: ggg.value + mam.value + "项目工作3",
+              value: ggg.value + mam.value + "项目工作3",
+            },
+          ];
         }
-        if(mam.value=='机器人工程'){
-          item.options =[
+        if (mam.value == "机器人工程") {
+          item.options = [
             {
-              label: ggg.value+mam.value+'基础实践1',
-              value: ggg.value+mam.value+'基础实践1',
+              label: ggg.value + mam.value + "基础实践1",
+              value: ggg.value + mam.value + "基础实践1",
             },
             {
-              label: ggg.value+mam.value+'基础实践2',
-              value: ggg.value+mam.value+'基础实践2',
+              label: ggg.value + mam.value + "基础实践2",
+              value: ggg.value + mam.value + "基础实践2",
             },
             {
-              label: ggg.value+mam.value+'基础实践3',
-              value: ggg.value+mam.value+'基础实践3',
-            }
-          ]
+              label: ggg.value + mam.value + "基础实践3",
+              value: ggg.value + mam.value + "基础实践3",
+            },
+          ];
         }
       }
-    })
+    });
   }
 }
 form.value.password = "";
+const lastStuList = ref([]);
 const getData = async (e, p) => {
   const res = await TeacherCourseData(e, p);
   console.log(res.data.SetTopic.Enrolls, "res");
   let ese = res.data.SetTopic.Enrolls;
+  lastStuList.value = ese;
   stableData.value = [];
   ese.forEach((item) => {
     stableData.value.push({
@@ -618,16 +632,70 @@ function formatDate(dateString) {
 const formRef = ref<FormInstance>();
 const saveEdit = (formEl: FormInstance | undefined) => {
   if (!formEl) return;
-  form.value.appointStudent=stableData.value;
-  form.value.deleteStudent=delstableData.value;
+  let appointStudent = [];
+  let deleteStudent = [];
+  //console.log(lastStuList.value, "lastStuList.value",stableData.value, "stableData.value");
+  // 检查 lastStuList 和 stableData 是否为空
+  if (!lastStuList.value || lastStuList.value.length === 0) {
+    //console.warn("lastStuList is empty");
+    // 如果 lastStuList 为空，所有 stableData 中的元素都应该加入 appointStudent
+    if (stableData.value && stableData.value.length > 0) {
+      appointStudent = stableData.value.map((item) => item.sno);
+    }
+  } else if (!stableData.value || stableData.value.length === 0) {
+    //console.warn("stableData is empty");
+    // 如果 stableData 为空，所有 lastStuList 中的元素都应该加入 deleteStudent
+    if (lastStuList.value && lastStuList.value.length > 0) {
+      deleteStudent = lastStuList.value.map((item) => item.studentSno);
+    }
+  } else {
+    // 如果两个数组都不为空，则进行正常的比较逻辑
+    let lastStuMap = new Map(
+      lastStuList.value.map((item) => [item.studentSno, item])
+    );
+    let stableDataMap = new Map(
+      stableData.value.map((item) => [item.sno, item])
+    );
+
+    // 比较 stableData 和 lastStuList
+    for (let ii of stableData.value) {
+      if (!lastStuMap.has(ii.sno)) {
+        appointStudent.push(ii.sno); // 如果 stableData 有，lastStuList 没有，则加入 appointStudent
+      }
+    }
+
+    for (let lastStu of lastStuList.value) {
+      if (!stableDataMap.has(lastStu.studentSno)) {
+        deleteStudent.push(lastStu.studentSno); // 如果 lastStuList 有，stableData 没有，则加入 deleteStudent
+      }
+    }
+  }
+
+  console.log("Appoint Student:", appointStudent);
+  console.log("Delete Student:", deleteStudent);
+  const originalArray = ['"Hello"', 123, '"World"', { key: "value" }];
+  appointStudent = appointStudent.map((item) => {
+    if (typeof item === "string") {
+      return item.replace(/"/g, "'");
+    }
+    return item; // 非字符串类型保持不变
+  });
+  deleteStudent = deleteStudent.map((item) => {
+    if (typeof item === "string") {
+      return item.replace(/"/g, "'");
+    }
+    return item; // 非字符串类型保持不变
+  });
+  form.value.appointStudent = appointStudent;
+  form.value.deleteStudent = deleteStudent;
   //console.log(form.value, "form.value");
   update(form.value);
 };
 const addRow = (k) => {
   let i = searchData.value[k];
-    // 检查 stableData.value 中是否已存在相同 sno 的数据
-    const isDuplicate = stableData.value.some(item => item.sno === i.sno);
-    if (!isDuplicate) {
+  // 检查 stableData.value 中是否已存在相同 sno 的数据
+  const isDuplicate = stableData.value.some((item) => item.sno === i.sno);
+  if (!isDuplicate) {
     stableData.value.push({
       name: i.name,
       sno: i.sno,
@@ -637,17 +705,16 @@ const addRow = (k) => {
       isappointment: 2,
     });
   } else {
-    ElMessage.error('该学生已指定');
+    ElMessage.error("该学生已指定");
   }
-}
-const searchStudent = async (e) => {
-  const res = await SerachStudent(e);
+};
+const searchStudent = async (e,a) => {
+  const res = await SerachStudent(e,a);
   console.log(res.data, "res.data");
   //if()
-  if(res.data.message =='failed'){
-    ElMessage.error('搜索失败')
-  }
-  else{
+  if (res.data.message == "failed") {
+    ElMessage.error("搜索失败");
+  } else {
     searchData.value = [];
     let op = res.data.Studentinfo.StudentLists;
     op.forEach((item) => {
@@ -658,10 +725,8 @@ const searchStudent = async (e) => {
         phone: item.phone,
         major: item.majorName,
         grade: item.grade,
-      })
-    })
-     
-    
+      });
+    });
   }
 };
 const handleAvatarSuccess: UploadProps["onSuccess"] = (

@@ -291,11 +291,13 @@ export const TeacherCourseData = async (p, c) => {
   }
 };
 //搜索学生
-export const SerachStudent = async (e) => {
+export const SerachStudent = async (e,a) => {
+  console.log(e,a,"search");
   try {
     let res = await axios.get("/api/openuse/getsepstudents", {
       params: {
         content: e,
+        projectpracticeCode: a,
       },
       headers: {
         Authorization: localStorage.getItem("vuems_token"),
@@ -431,8 +433,8 @@ export const editTeacherCourse = async (e) => {
         studentRequirements: e.studentRequirements,
         releaseStatus: e.releaseStatus,
         resultDisplay: e.resultDisplay,
-        appointStudent: e.appointStudent.map((item) => item.sno),
-        deleteStudent: e.deleteStudent.map((item) => item.sno),
+        appointStudent: e.appointStudent,
+        deleteStudent: e.deleteStudent,
         teacher_name: e.teacherName,
         teacher_sno: e.teacherSno,
         //reimburse: e.reimburse,
@@ -476,7 +478,7 @@ export const fetchStudentCourseData = async (e, p, esp, n, s) => {
     let ans = {
       SelectCourseInfoList: res.data.data.SelectCourseInfoList,
       total: res.data.data.Count,
-      zhong: res.data.data.People,
+      zhong: res.data.data.PeopleIn + '+'+ res.data.data.PeopleNotIn,
       weixuan: res.data.data.PeopleNot,
       yixuan: res.data.data.PeopleHave,
     };

@@ -506,6 +506,7 @@ const isEdit = ref(false);
 const isEdits = ref(false);
 const rowData = ref({});
 const handleEdit = (row: User) => {
+  console.log(row, "编辑数据");
   rowData.value = { ...row };
   isEdit.value = true;
   visible.value = true;
@@ -520,7 +521,7 @@ const mapping = {
 const updateData = async (e) => {
 
   if (isEdit.value) {
-    console.log(e, "编辑数据");
+    // console.log(e, "编辑数据");
 
     if ("projectpracticeCode" in rowData.value) {
       e.projectpracticeCode = rowData.value.projectpracticeCode;

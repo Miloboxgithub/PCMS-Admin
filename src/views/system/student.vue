@@ -68,7 +68,7 @@
             />
           </el-select>
           <div class="rrr">
-            <div>专业总人数：{{ zhong }}人</div>
+            <div>专业总人数：（{{ zhong }}）人</div>
             <div>已选课人数：{{ yixuan }}人</div>
             <div>未选课人数：{{ weixuan }}人</div>
           </div>
@@ -162,8 +162,10 @@ let columns = ref([
   { prop: "name", label: "姓名" },
   { prop: "sno", label: "学号" },
   { prop: "phone", label: "电话" },
-  { prop: "class", label: "班级" },
-  { prop: "title", label: "题目" },
+  { prop: "class", label: "班级", width: 55 },
+  { prop: "grade", label: "年级" },
+  { prop: "major_name", label: "专业" ,width:200},
+  { prop: "title", label: "题目" ,width:200 },
   { prop: "teacher_name", label: "指导老师" },
   { prop: "code", label: "选课课题编号" },
   { prop: "selectStatus", label: "状态" },
@@ -599,7 +601,7 @@ const handleDelete = async (row) => {
 <style scoped>
 .rrr {
   margin-left: 10px;
-  width: 400px;
+  width: 600px;
   display: flex;
   justify-content: space-between;
   align-items: center;
