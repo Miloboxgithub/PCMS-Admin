@@ -103,7 +103,7 @@
     { prop: "adminName", label: "管理员姓名" },
     { prop: "adminSno", label: "管理员工号" },
     { prop: "email", label: "邮箱"},
-    { prop: "grade", label: "年级" },
+    { prop: "CollegeName", label: "学院" },
     { prop: "majorName", label: "专业" },
     { prop: "phone", label: "电话号码" },
     { prop: "operator", label: "操作", width: 250 },
@@ -244,10 +244,19 @@ const recentYears = getRecentYears(4); // 获取最近3年
       },
       {
         type: "select",
-        label: "年级",
-        prop: "grade",
+        label: "学院",
+        prop: "CollegeName",
         required: true,
-        options: recentYears,
+        options: [{
+          label: "中德智能制造学院",
+          value: "中德智能制造学院",
+        }, {
+          label: "大数据与互联网学院",
+          value: "大数据与互联网学院",
+        }
+//         中德智能制造学院：JX002
+// 大数据与互联网学院：JX003
+        ],
       },
     ],
   });
@@ -287,10 +296,19 @@ const recentYears = getRecentYears(4); // 获取最近3年
       },
       {
         type: "select",
-        label: "年级",
-        prop: "grade",
+        label: "学院",
+        prop: "CollegeName",
         required: true,
-        options:recentYears,
+        options: [{
+          label: "中德智能制造学院",
+          value: "中德智能制造学院",
+        }, {
+          label: "大数据与互联网学院",
+          value: "大数据与互联网学院",
+        }
+//         中德智能制造学院：JX002
+// 大数据与互联网学院：JX003
+        ],
       },
     ],
   });
@@ -363,8 +381,8 @@ const recentYears = getRecentYears(4); // 获取最近3年
         label: "专业",
       },
       {
-        prop: "grade",
-        label: "年级",
+        prop: "CollegeName",
+        label: "学院",
       },
       {
         prop: "phone",

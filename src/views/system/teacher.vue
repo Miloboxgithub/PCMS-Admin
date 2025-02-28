@@ -65,7 +65,9 @@
               :value="item.value"
             />
           </el-select>
-          
+          <div class="rrr">
+            <div>可选人数共计{{sump}}人，已覆盖本年级该课程人数{{sump}}/{{People}}</div>
+          </div>
         </template>
       </TableCustom>
     </div>
@@ -132,6 +134,8 @@ const yesbaoxiao = ref(false);
 const nobaoxiao = ref(false);
 const quanbu = ref(true);
 const router = useRouter();
+const sump = ref(0);
+const People = ref(0);
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
   router.push("/login");
@@ -278,6 +282,11 @@ const getData = async (e, p) => {
     b = '0'
   }
   const ress = await fetchTeacherCourseData(e, p, practiceName.value,'','','-1',q,b);
+  sump.value = 0;
+ ress.SetTopicInfoList.forEach((item) => {
+    sump.value+= item.studentRequirements;
+  })
+  People.value = ress.People
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -644,4 +653,16 @@ const handleDelete = async (row) => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.rrr {
+  margin-left: 10px;
+  width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: MiSans;
+  font-weight: 500;
+  font-size: 16px;
+  color: #606266;
+}
+</style>

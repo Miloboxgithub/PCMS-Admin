@@ -230,7 +230,7 @@
           </el-select>
           <el-date-picker
             v-else-if="item.type === 'date'"
-            type="date"
+            type="datetime"
             v-model="form[item.prop]"
             :value-format="item.format"
           ></el-date-picker>

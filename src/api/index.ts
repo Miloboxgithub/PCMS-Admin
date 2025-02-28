@@ -54,9 +54,9 @@ export const fetchCourseData = async (e, p,m,g,a) => {
     };
     ans.ProjectPracticeInfoList.forEach((item) => {
       item.selectTime =
-        formatDate(item.selectStime) + "~" + formatDate(item.selectEtime);
+        item.selectStime + "~" + item.selectEtime;
       item.titleTime =
-        formatDate(item.titleStime) + "~" + formatDate(item.titleEtime);
+        item.titleStime + "~" + item.titleEtime;
     });
     return ans;
   } catch (error) {
@@ -262,6 +262,7 @@ export const fetchTeacherCourseData = async (e, p, esp, c, n, t, q, b) => {
     let ans = {
       SetTopicInfoList: res.data.data.SetTopicInfoList,
       total: res.data.data.count,
+      People : res.data.data.People,
     };
     return ans;
   } catch (error) {
@@ -584,7 +585,7 @@ export const exportStudentCourseData = async (e) => {
   }
 };
 //分页获取教师信息
-export const fetchTeacherData = async (e, p, c) => {
+export const fetchTeacherData = async (e, p, c,x,m) => {
   try {
     let res = await axios.post(
       "/api/superadmin/getteacherbypage",
@@ -592,6 +593,8 @@ export const fetchTeacherData = async (e, p, c) => {
         Page: e,
         Size: 20,
         Content: c,
+        CollegeCode:x,
+        MajorCode:m,
         Type: "000000",
         Reserve: "0",
       },
@@ -625,6 +628,8 @@ export const createTeacher = async (e) => {
         email: e.email,
         major_name: e.major_name,
         major_code: e.major_code,
+            college_code:e.college_code,
+    college_name: e.college_name,
       },
       {
         headers: {
@@ -652,6 +657,8 @@ export const updateTeacher = async (e) => {
         email: e.email,
         major_name: e.major_name,
         major_code: e.major_code,
+        college_code:e.college_code,
+        college_name: e.college_name,
       },
       {
         headers: {
@@ -951,6 +958,7 @@ export const createAdmin = async (e) => {
         adminName: e.adminName,
         adminSno: e.adminSno,
         password: e.password,
+        collegeName:e.CollegeName,
         grade: e.grade,
         majorName: e.majorName,
         majorCode: e.majorCode,

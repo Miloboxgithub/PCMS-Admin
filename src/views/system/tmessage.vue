@@ -40,6 +40,30 @@
               <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
               导出
             </el-button>
+            <el-select
+            v-model="xx"
+            placeholder="学院"
+            style="width: 200px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in college"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+            <el-select
+            v-model="mm"
+            placeholder="专业"
+            style="width: 200px; margin-left: 10px"
+          >
+            <el-option
+              v-for="item in majorss"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </template>
       </TableCustom>
     </div>
@@ -98,7 +122,7 @@
 </template>
 
 <script setup lang="ts" name="system-user">
-import { ref, reactive } from "vue";
+import { ref, reactive ,watch} from "vue";
 import { ElMessage } from "element-plus";
 import { CirclePlusFilled } from "@element-plus/icons-vue";
 import { User } from "@/types/user";
@@ -169,7 +193,27 @@ const openUploadDialog = () => {
   // 设置弹窗可见
   uploadDialogVisible.value = true;
 };
-
+const majorss = ref([
+  {label: "全部", value: ""},
+  { label: "机械设计制造及其自动化", value: "0101" },
+  { label: "电子科学与技术", value: "0102" },
+  { label: "自动化", value: "0103" },
+  { label: "机器人工程", value: "0104" },
+]);
+const college = ref([
+  {label: "全部", value: ""},
+  { label: "中德智能制造学院", value: "JX002" },
+  { label: "大数据与互联网学院", value: "JX003" },
+])
+const xx = ref("");
+const mm = ref("");
+watch(mm, (newValue, oldValue) => {
+  // 在这里调用你需要的函数
+  getData(1, 0);
+});
+watch(xx, (newValue, oldValue) => {
+  getData(1, 0);
+})
 const uploadDialogVisible = ref(false);
 // 表格相关
 let columns = ref([
@@ -181,6 +225,7 @@ let columns = ref([
   { prop: "phone", label: "电话" },
   { prop: "email", label: "邮箱" },
   { prop: "major_name", label: "专业" },
+  { prop: "CollegeName", label: "学院" },
   { prop: "operator", label: "操作", width: 250 },
 ]);
 const page = reactive({
@@ -191,7 +236,7 @@ const page = reactive({
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 const getData = async (e, p) => {
-  const ress = await fetchTeacherData(e, p,'');
+  const ress = await fetchTeacherData(e, p,'',xx.value,mm.value);
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -207,7 +252,7 @@ const handleSearch = async (queryData) => {
   if (!queryData.sno) {
     getData(1, 0);
   } else {
-    const ress = await fetchTeacherData(1,0,queryData.sno);
+    const ress = await fetchTeacherData(1,0,queryData.sno,xx.value,mm.value);
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
@@ -432,6 +477,16 @@ let options = ref<FormOption>({
         { label: "机器人工程", value: "机器人工程" },
       ],
     },
+    {
+      type: "select",
+      label: "学院",
+      prop: "college_name",
+      required: true,
+      options: [
+        { label: "中德智能制造学院", value: "中德智能制造学院" },
+        { label: "大数据与互联网学院", value: "大数据与互联网学院" },
+      ],
+    },
   ],
 });
 let newoptions = ref<FormOption>({
@@ -474,6 +529,16 @@ let newoptions = ref<FormOption>({
         { label: "机器人工程", value: "机器人工程" },
       ],
     },
+    {
+      type: "select",
+      label: "学院",
+      prop: "college_name",
+      required: true,
+      options: [
+        { label: "中德智能制造学院", value: "中德智能制造学院" },
+        { label: "大数据与互联网学院", value: "大数据与互联网学院" },
+      ],
+    },
   ],
 });
 const visible = ref(false);
@@ -493,8 +558,13 @@ const mapping = {
   机器人工程: "0104",
   自动化: "0103",
 };
+const mapp = {
+  中德智能制造学院:"JX002",
+  大数据与互联网学院:"JX003"
+};
 const updateData = async (e) => {
   e.major_code = mapping[e.major_name];
+  e.college_code = mapp[e.college_name];
   if (isEdit.value) {
     const res = await updateTeacher(e);
     console.log(res, "更新数据");
@@ -555,6 +625,10 @@ const handleView = (row: User) => {
       prop: "major_name",
       label: "专业",
     },
+    {
+      prop: "CollegeName",
+      label: "学院",
+    }
   ];
   visible1.value = true;
 };
