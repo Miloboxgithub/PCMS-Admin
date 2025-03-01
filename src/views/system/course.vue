@@ -142,7 +142,7 @@ let columns = ref([
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
   { prop: "projectpracticeCode", label: "实践课程编号", width: 200 },
-  { prop: "schoolCode", label: "课程编号", width: 150 },
+  { prop: "schoolCode", label: "教务课程编号", width: 150 },
   { prop: "projectpracticeName", label: "实践课程名称", width: 250 },
   { prop: "majorName", label: "专业", width: 200 ,sortable :true},
   { prop: "grade", label: "年级", width: 85 ,sortable :true},
@@ -348,7 +348,7 @@ let options = ref({
     },
     {
       type: "input",
-      label: "课程编号",
+      label: "教务课程编号",
       prop: "schoolCode",
       required: true,
     },
@@ -424,7 +424,7 @@ let newoptions = ref({
     },
     {
       type: "input",
-      label: "课程编号",
+      label: "教务课程编号",
       prop: "schoolCode",
       required: true,
     },
@@ -534,16 +534,13 @@ const handleView = (row: User) => {
     },
     {
       prop: "schoolCode",
-      label: "课程编号",
+      label: "教务课程编号",
     },
     {
       prop: "projectpracticeName",
       label: "实践课程名称",
     },
-    {
-      prop: "SchoolCode",
-      label: "课程编号",
-    },
+
     {
       prop: "majorName",
       label: "专业",

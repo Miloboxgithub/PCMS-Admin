@@ -17,13 +17,14 @@
         <template #reimburse="{ rows }">
           <el-tag type="warning" v-if="rows.reimburse == 0">未报销</el-tag>
           <el-tag type="success" v-else-if="rows.reimburse == 1">已报销</el-tag>
-          
         </template>
         <template #releaseStatus="{ rows }">
           <el-tag type="warning" v-if="rows.releaseStatus == 0">未发布</el-tag>
-          <el-tag type="success" v-else-if="rows.releaseStatus == 1">已发布</el-tag>
+          <el-tag type="success" v-else-if="rows.releaseStatus == 1"
+            >已发布</el-tag
+          >
         </template>
-        
+
         <template #toolbarBtn>
           <!-- <el-button
             type="warning"
@@ -35,28 +36,34 @@
             >新增数据</el-button
           > -->
           <el-button type="success" @click="daochu()">
-              <el-icon style="margin-right: 5px"><el-icon><UploadFilled /></el-icon></el-icon>
-              导出
-            </el-button>
+            <el-icon style="margin-right: 5px"
+              ><el-icon><UploadFilled /></el-icon
+            ></el-icon>
+            导出
+          </el-button>
           <!-- <el-button type="primary" @click="visible2 = true">
               <el-icon style="margin-right: 5px"><CirclePlus /></el-icon>
               增添不可预约时段
             </el-button> -->
-            <div style="margin-left: 10px;">
+          <div style="margin-left: 10px">
             <el-checkbox v-model="quanbu" label="全部" border />
           </div>
-            <div style="margin-left: 10px;">
+          <div style="margin-left: 10px">
             <el-checkbox v-model="yesfabu" label="已发布" border />
           </div>
-          <div style="margin-left: 10px;"><el-checkbox v-model="nofabu" label="未发布" border /></div>
-          <div style="margin-left: 10px;">
+          <div style="margin-left: 10px">
+            <el-checkbox v-model="nofabu" label="未发布" border />
+          </div>
+          <div style="margin-left: 10px">
             <el-checkbox v-model="yesbaoxiao" label="已报销" border />
           </div>
-          <div style="margin-left: 10px;"><el-checkbox v-model="nobaoxiao" label="未报销" border /></div>
+          <div style="margin-left: 10px">
+            <el-checkbox v-model="nobaoxiao" label="未报销" border />
+          </div>
           <el-select
             v-model="practiceName"
             placeholder="Select"
-            style="width: 240px; margin-left: 10px"
+            style="width: 240px; margin-left: 10px; margin-right: 10px"
           >
             <el-option
               v-for="item in Projectpractice"
@@ -65,8 +72,15 @@
               :value="item.value"
             />
           </el-select>
+          <el-tooltip :content="jiaowucode" placement="top">
+            <el-button>{{ jiaowucode }}</el-button>
+          </el-tooltip>
           <div class="rrr">
-            <div>可选人数共计{{sump}}人，已覆盖本年级该课程人数{{sump}}/{{people}}</div>
+            <div>
+              可选人数共计{{ sump }}人，已覆盖本年级该课程人数{{ sump }}/{{
+                people
+              }}
+            </div>
           </div>
         </template>
       </TableCustom>
@@ -100,7 +114,9 @@
         </template>
         <template #fabu="{ rows }">
           <el-tag type="warning" v-if="rows.releaseStatus == 0">未发布</el-tag>
-          <el-tag type="success" v-else-if="rows.releaseStatus == 1">已发布</el-tag>
+          <el-tag type="success" v-else-if="rows.releaseStatus == 1"
+            >已发布</el-tag
+          >
         </template>
       </TableDetail>
     </el-dialog>
@@ -136,6 +152,7 @@ const quanbu = ref(true);
 const router = useRouter();
 const sump = ref(0);
 const people = ref(0);
+const jiaowucode = ref("");
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
   router.push("/login");
@@ -159,20 +176,20 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
-  { prop: "code", label: "课题编号" ,width:200},
+  { prop: "code", label: "课题编号", width: 200 },
   //{ prop: "projectpracticeName", label: "实践课程名称",width: 250 },
-  { prop: "title", label: "题目",width: 250 },
-  { prop: "teacherName", label: "指导老师" ,width: 150},
-  { prop: "teacherSno", label: "工号" ,width: 150},
+  { prop: "title", label: "题目", width: 250 },
+  { prop: "teacherName", label: "指导老师", width: 150 },
+  { prop: "teacherSno", label: "工号", width: 150 },
   { prop: "guidanceTime", label: "指导时间", width: 150 },
-  { prop: "guidancePlace", label: "指导地点" ,width: 150},
-  {prop: "studentRequirements", label: "最大可选人数",width:150 },
-  { prop: "studentHave", label: "已选人数",width:100 },
-  { prop: "studentNeed", label: "剩余人数" ,width:100},
-  { prop: "budget", label: "经费", width:100},
-  {prop: "releaseStatus", label: "是否发布",width:100 },
-  { prop: "reimburse", label: "是否已报销" ,width:100},
-  { prop: "operator", label: "操作", width: 250 ,fixed: "right"},
+  { prop: "guidancePlace", label: "指导地点", width: 150 },
+  { prop: "studentRequirements", label: "最大可选人数", width: 150 },
+  { prop: "studentHave", label: "已选人数", width: 100 },
+  { prop: "studentNeed", label: "剩余人数", width: 100 },
+  { prop: "budget", label: "经费", width: 100 },
+  { prop: "releaseStatus", label: "是否发布", width: 100 },
+  { prop: "reimburse", label: "是否已报销", width: 100 },
+  { prop: "operator", label: "操作", width: 250, fixed: "right" },
 ]);
 const page = reactive({
   index: 1,
@@ -189,17 +206,17 @@ watch(practiceName, (newValue, oldValue) => {
   getData(1, 0);
 });
 watch(quanbu, (newValue, oldValue) => {
-  if(newValue == true){
+  if (newValue == true) {
     yesfabu.value = false;
     nofabu.value = false;
     yesbaoxiao.value = false;
     nobaoxiao.value = false;
   }
   getData(1, 0);
-})
+});
 watch(yesfabu, (newValue, oldValue) => {
   //console.log(`yesxuan选中的值从 ${oldValue} 变为 ${newValue}`);
-  if(newValue == true){
+  if (newValue == true) {
     quanbu.value = false;
     nofabu.value = false;
   }
@@ -208,31 +225,31 @@ watch(yesfabu, (newValue, oldValue) => {
 });
 watch(nofabu, (newValue, oldValue) => {
   //console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
-  if(newValue == true){
+  if (newValue == true) {
     quanbu.value = false;
     yesfabu.value = false;
   }
   // 在这里调用你需要的函数
   getData(1, 0);
-})
+});
 watch(nobaoxiao, (newValue, oldValue) => {
   //console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
-  if(newValue == true){
+  if (newValue == true) {
     yesbaoxiao.value = false;
     quanbu.value = false;
   }
   // 在这里调用你需要的函数
   getData(1, 0);
-})
+});
 watch(yesbaoxiao, (newValue, oldValue) => {
   //console.log(`noxuan选中的值从 ${oldValue} 变为 ${newValue}`);
-  if(newValue == true){
+  if (newValue == true) {
     nobaoxiao.value = false;
     quanbu.value = false;
   }
   // 在这里调用你需要的函数
   getData(1, 0);
-})
+});
 const getadmindata = async () => {
   const ress = await fetchAdminData();
   if (ress.code != 50) {
@@ -246,7 +263,7 @@ const getadmindata = async () => {
     goTologon();
   }
 };
-getadmindata()
+getadmindata();
 const componentKey = ref(0); // 强制刷新组件
 const tableData = ref<User[]>([]);
 let esp = localStorage.getItem("v_codes");
@@ -257,36 +274,59 @@ if (Array.isArray(esp)) {
     Projectpractice.value.push({
       value: element.projectPracticeCode,
       label: element.projectPracticeName,
+      schoolCode: element.schoolCode,
     });
   });
 }
 if (Projectpractice.value.length > 0) {
   practiceName.value = Projectpractice.value[0].value;
+  jiaowucode.value = Projectpractice.value[0].schoolCode;
 }
+watch(practiceName, (newValue, oldValue) => {
+  Projectpractice.value.forEach((item) => {
+    if (item.value == newValue) {
+      jiaowucode.value = item.schoolCode;
+    }
+  })
+});
 const getData = async (e, p) => {
-  if(yesfabu.value==false&&nofabu.value==false&&yesbaoxiao.value==false&&nobaoxiao.value==false){
+  if (
+    yesfabu.value == false &&
+    nofabu.value == false &&
+    yesbaoxiao.value == false &&
+    nobaoxiao.value == false
+  ) {
     quanbu.value = true;
   }
-  let q='-1'
-  let b='-1'
-  if (yesfabu.value == true&&nofabu.value == false) {
-    q = '1'
+  let q = "-1";
+  let b = "-1";
+  if (yesfabu.value == true && nofabu.value == false) {
+    q = "1";
   }
-  if (yesfabu.value == false&&nofabu.value == true) {
-    q = '0'
+  if (yesfabu.value == false && nofabu.value == true) {
+    q = "0";
   }
-  if (yesbaoxiao.value == true&& nobaoxiao.value == false) {
-    b = '1'
+  if (yesbaoxiao.value == true && nobaoxiao.value == false) {
+    b = "1";
   }
-  if (yesbaoxiao.value == false&& nobaoxiao.value == true) {
-    b = '0'
+  if (yesbaoxiao.value == false && nobaoxiao.value == true) {
+    b = "0";
   }
-  const ress = await fetchTeacherCourseData(e, p, practiceName.value,'','','-1',q,b);
+  const ress = await fetchTeacherCourseData(
+    e,
+    p,
+    practiceName.value,
+    "",
+    "",
+    "-1",
+    q,
+    b
+  );
   sump.value = 0;
- ress.SetTopicInfoList.forEach((item) => {
-    sump.value+= item.studentRequirements;
-  })
-  people.value = ress.people
+  ress.SetTopicInfoList.forEach((item) => {
+    sump.value += item.studentRequirements;
+  });
+  people.value = ress.people;
   if (ress == "Request failed with status code 403") {
     goTologon();
   }
@@ -299,28 +339,41 @@ const getData = async (e, p) => {
 getData(1, 0);
 
 const handleSearch = async (queryData) => {
-  if (!queryData.StudentRequirements&&!queryData.GuidancePlace&&!queryData.teacherName) {
+  if (
+    !queryData.StudentRequirements &&
+    !queryData.GuidancePlace &&
+    !queryData.teacherName
+  ) {
     getData(1, 0);
   } else {
-    let q='-1'
-    let b='-1'
-  if (yesfabu.value == true&&nofabu.value == false) {
-    q = '1'
-  }
-  if (yesfabu.value == false&&nofabu.value == true) {
-    q = '0'
-  }
-  if (yesbaoxiao.value == true&& nobaoxiao.value == false) {
-    b = '1'
-  }
-  if (yesbaoxiao.value == false&& nobaoxiao.value == true) {
-    b = '0'
-  }
-  let tst = queryData.StudentRequirements;
-  if(queryData.StudentRequirements==undefined){
-    tst='-1'
-  }
-    const ress = await fetchTeacherCourseData(1, 0, practiceName.value, queryData.teacherName, queryData.GuidancePlace, tst, q,b);
+    let q = "-1";
+    let b = "-1";
+    if (yesfabu.value == true && nofabu.value == false) {
+      q = "1";
+    }
+    if (yesfabu.value == false && nofabu.value == true) {
+      q = "0";
+    }
+    if (yesbaoxiao.value == true && nobaoxiao.value == false) {
+      b = "1";
+    }
+    if (yesbaoxiao.value == false && nobaoxiao.value == true) {
+      b = "0";
+    }
+    let tst = queryData.StudentRequirements;
+    if (queryData.StudentRequirements == undefined) {
+      tst = "-1";
+    }
+    const ress = await fetchTeacherCourseData(
+      1,
+      0,
+      practiceName.value,
+      queryData.teacherName,
+      queryData.GuidancePlace,
+      tst,
+      q,
+      b
+    );
     if (ress == null) {
       ElMessage.error("查询失败");
     } else {
@@ -336,22 +389,25 @@ async function daochu() {
   })
     .then(async () => {
       const res = await exportTeacherCourseData(practiceName.value);
-      console.log(res,practiceName.value)
+      console.log(res, practiceName.value);
       if (res.code == 50)
         ElMessage({
           type: "warning",
           message: "导出失败",
         });
       else {
-        const url = window.URL.createObjectURL(new Blob([res],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-        const link = document.createElement('a');
+        const url = window.URL.createObjectURL(
+          new Blob([res], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          })
+        );
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', 'data.xlsx'); // 设置下载的文件名
-        link.style.display = 'none' // 隐藏元素
+        link.setAttribute("download", "data.xlsx"); // 设置下载的文件名
+        link.style.display = "none"; // 隐藏元素
         document.body.appendChild(link);
         link.click();
-        
+
         // 清理 DOM 和释放 URL 对象
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
@@ -522,13 +578,12 @@ const handleEdit = (row: User) => {
   getData(1, 0);
 };
 const mapping = {
-  "机械设计制造及其自动化": "0101",
-  "电子科学与技术": "0102",
-  "机器人工程": "0104",
-  "自动化": "0103",
+  机械设计制造及其自动化: "0101",
+  电子科学与技术: "0102",
+  机器人工程: "0104",
+  自动化: "0103",
 };
 const updateData = async (e) => {
-
   if (isEdit.value) {
     // console.log(e, "编辑数据");
 
@@ -617,9 +672,9 @@ const handleView = (row: User) => {
       label: "是否报销",
     },
     {
-      prop:"fabu",
-      label:"发布状态"
-    }
+      prop: "fabu",
+      label: "发布状态",
+    },
   ];
   visible1.value = true;
 };
@@ -664,5 +719,15 @@ const handleDelete = async (row) => {
   font-weight: 500;
   font-size: 16px;
   color: #606266;
+}
+.el-popper.is-customized {
+  /* Set padding to ensure the height is 32px */
+  padding: 6px 12px;
+  background: linear-gradient(90deg, rgb(159, 229, 151), rgb(204, 229, 129));
+}
+
+.el-popper.is-customized .el-popper__arrow::before {
+  background: linear-gradient(45deg, #b2e68d, #bce689);
+  right: 0;
 }
 </style>

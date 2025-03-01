@@ -15,7 +15,7 @@ export const fetchAdminData = async () => {
         Authorization: localStorage.getItem("vuems_token"),
       },
     });
-    //console.log(res.data, "fetchAdminData");
+    console.log(res.data, "fetchAdminData");
     return res.data;
   } catch (error) {
     console.error("Error fetching user data:", error);
