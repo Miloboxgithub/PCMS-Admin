@@ -51,6 +51,7 @@ export const fetchCourseData = async (e, p,m,g,a) => {
     let ans = {
       ProjectPracticeInfoList: res.data.data.ProjectPracticeInfoList,
       total: res.data.data.count,
+      majorName: res.data.data.majorName,
     };
     ans.ProjectPracticeInfoList.forEach((item) => {
       item.selectTime =
@@ -148,6 +149,7 @@ export const createCourse = async (e) => {
         titleEtime: e.titleEtime,
         grade: e.grade,
         status: e.status,
+        schoolCode: e.schoolCode,
       },
       {
         headers: {
@@ -181,6 +183,7 @@ export const updateCourse = async (e) => {
         status: e.status,
         adminName: e.adminName,
         adminSno: e.adminSno,
+        schoolCode: e.schoolCode,
       },
       {
         headers: {
@@ -262,7 +265,7 @@ export const fetchTeacherCourseData = async (e, p, esp, c, n, t, q, b) => {
     let ans = {
       SetTopicInfoList: res.data.data.SetTopicInfoList,
       total: res.data.data.count,
-      People : res.data.data.People,
+      people : res.data.data.people,
     };
     return ans;
   } catch (error) {

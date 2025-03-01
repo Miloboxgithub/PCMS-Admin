@@ -575,6 +575,11 @@ if (edit) {
     });
   }
 }
+else{
+  //console.log(localStorage.getItem("majorName"),'sdsdsa')
+  mam.value = localStorage.getItem("majorName");
+  form.value.majorName = localStorage.getItem("majorName");
+}
 form.value.password = "";
 const lastStuList = ref([]);
 const getData = async (e, p) => {

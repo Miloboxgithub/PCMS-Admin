@@ -66,7 +66,7 @@
             />
           </el-select>
           <div class="rrr">
-            <div>可选人数共计{{sump}}人，已覆盖本年级该课程人数{{sump}}/{{People}}</div>
+            <div>可选人数共计{{sump}}人，已覆盖本年级该课程人数{{sump}}/{{people}}</div>
           </div>
         </template>
       </TableCustom>
@@ -135,7 +135,7 @@ const nobaoxiao = ref(false);
 const quanbu = ref(true);
 const router = useRouter();
 const sump = ref(0);
-const People = ref(0);
+const people = ref(0);
 const goTologon = () => {
   // 使用 router.push 方法进行页面跳转
   router.push("/login");
@@ -286,7 +286,7 @@ const getData = async (e, p) => {
  ress.SetTopicInfoList.forEach((item) => {
     sump.value+= item.studentRequirements;
   })
-  People.value = ress.People
+  people.value = ress.people
   if (ress == "Request failed with status code 403") {
     goTologon();
   }

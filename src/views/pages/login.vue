@@ -120,6 +120,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
           // 登录成功
           //console.log(response.data);
           if (response.data.data.message == "success") {
+          console.log(response);
             ElMessage.success("登录成功");
             localStorage.setItem("vuems_name", param.username);
             localStorage.setItem("vuems_role", response.data.data.role);

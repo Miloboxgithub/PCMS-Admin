@@ -141,8 +141,8 @@ let columns = ref([
   //{ type: "index", label: "序号", width: 55, align: "center" },
   { type: "selection", width: 55, align: "center" },
   { prop: "ad", label: "序号", width: 55, align: "center" },
-
   { prop: "projectpracticeCode", label: "实践课程编号", width: 200 },
+  { prop: "schoolCode", label: "课程编号", width: 150 },
   { prop: "projectpracticeName", label: "实践课程名称", width: 250 },
   { prop: "majorName", label: "专业", width: 200 ,sortable :true},
   { prop: "grade", label: "年级", width: 85 ,sortable :true},
@@ -166,7 +166,8 @@ const getData = async (e, p, m, g, a) => {
   }
   tableData.value = ress.ProjectPracticeInfoList;
   page.total = ress.total;
-
+  localStorage.setItem("majorName", ress.majorName);
+  //console.log(localStorage.getItem("majorName"),'sdsdsa',ress.majorName)
   componentKey.value++;
   console.log(ress, tableData.value, "tableData");
 };
@@ -348,7 +349,7 @@ let options = ref({
     {
       type: "input",
       label: "课程编号",
-      prop: "SchoolCode",
+      prop: "schoolCode",
       required: true,
     },
     {
@@ -424,7 +425,7 @@ let newoptions = ref({
     {
       type: "input",
       label: "课程编号",
-      prop: "SchoolCode",
+      prop: "schoolCode",
       required: true,
     },
     {
@@ -530,6 +531,10 @@ const handleView = (row: User) => {
     {
       prop: "projectpracticeCode",
       label: "实践课程编号",
+    },
+    {
+      prop: "schoolCode",
+      label: "课程编号",
     },
     {
       prop: "projectpracticeName",
