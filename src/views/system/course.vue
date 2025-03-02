@@ -496,12 +496,36 @@ const updateData = async (e) => {
       e.projectpracticeCode = rowData.value.projectpracticeCode;
       const res = await updateCourse(e);
       console.log(res, "更新数据");
+      if(res.code == 200){
+      ElMessage({
+        type: 'success',
+        message: '添加成功',
+      })
+    }
+    else if(res.code == 50){
+      ElMessage({
+        type: 'error',
+        message: res.message,
+      })
+    }
     } else {
       console.log("无数据");
     }
   } else {
     const res = await createCourse(e);
     console.log(res, "新建数据");
+    if(res.code == 200){
+      ElMessage({
+        type: 'success',
+        message: '添加成功',
+      })
+    }
+    else if(res.code == 50){
+      ElMessage({
+        type: 'error',
+        message: res.message,
+      })
+    }
   }
   closeDialog();
   setTimeout(() => {

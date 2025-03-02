@@ -343,8 +343,13 @@ const recentYears = getRecentYears(4); // 获取最近3年
     "机器人工程": "0104",
     "自动化": "0103",
   };
+  const mappings = {
+    "中德智能制造学院": "JX002",
+    "大数据与互联网学院": "JX003",
+  };
   const updateData = async (e) => {
     e.majorCode = mapping[e.majorName]
+    e.CollegeCode = mappings[e.CollegeName]
     if(isEdit.value){
 
  
@@ -418,9 +423,10 @@ const recentYears = getRecentYears(4); // 获取最近3年
     let delt = []
     if (e.length > 0) {
     e.forEach((value) => {
-      delt.push(value.adminSno)
+      delt.push(value.adminSno+':'+mapping[value.majorName]+'-'+value.grade)
     });
   }
+  console.log(delt, "删除");
     DeleteAdminData(delt).then((res) => {
       ElMessage.success("删除成功");
       getData(1, 0);
@@ -431,7 +437,7 @@ const recentYears = getRecentYears(4); // 获取最近3年
   }
   // 删除相关
   const handleDelete = async (row) => {
-    let ttt = [row.adminSno]
+    let ttt = [row.adminSno+':'+mapping[row.majorName]+'-'+row.grade]
     const res = await DeleteAdminData(ttt);
     if (res.code!=50) {
       ElMessage.success("删除成功");

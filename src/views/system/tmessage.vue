@@ -267,7 +267,7 @@ async function daochu() {
     type: "info",
   })
     .then(async () => {
-      const res = await exportTeacherData();
+      const res = await exportTeacherData(xx.value,mm.value);
       if (res.code == 50)
         ElMessage({
           type: "warning",

@@ -589,6 +589,7 @@ export const exportStudentCourseData = async (e) => {
 };
 //分页获取教师信息
 export const fetchTeacherData = async (e, p, c,x,m) => {
+  console.log(e, p, c,x,m);
   try {
     let res = await axios.post(
       "/api/superadmin/getteacherbypage",
@@ -598,7 +599,7 @@ export const fetchTeacherData = async (e, p, c,x,m) => {
         Content: c,
         CollegeCode:x,
         MajorCode:m,
-        Type: "000000",
+        Type: "00000",
         Reserve: "0",
       },
       {
@@ -714,11 +715,13 @@ export const DeleteTeacherData = async (e) => {
   }
 };
 //导出教师信息
-export const exportTeacherData = async () => {
+export const exportTeacherData = async (a,b) => {
   //console.log("fetchCourseData", e, p);
   try {
     let res = await axios.get("/api/superadmin/getexportteacher", {
       params: {
+        CollegeCode:a,
+        MajorCode:b,
         Content: "",
         Type: "00000000",
       },
@@ -911,7 +914,7 @@ export const fetchManageData = async (e, p, c) => {
         page: e,
         size: 20,
         Content: c,
-        Type: "",
+        Type: "00010",
         reverse: p,
       },
       headers: {
@@ -962,6 +965,7 @@ export const createAdmin = async (e) => {
         adminSno: e.adminSno,
         password: e.password,
         collegeName:e.CollegeName,
+        collegeCode: e.CollegeCode,
         grade: e.grade,
         majorName: e.majorName,
         majorCode: e.majorCode,
@@ -1013,7 +1017,7 @@ export const DeleteAdminData = async (e) => {
   try {
     // 定义要发送的数据
     const data = {
-      adminSno: e,
+      adminInCharge: e,
       // ...其他需要的数据字段
     };
     // 发起 POST 请求
